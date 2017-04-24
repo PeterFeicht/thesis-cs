@@ -1,0 +1,33 @@
+% Don' clutter the main file
+\input{structure/header}
+\input{structure/defs}
+
+\begin{document}
+\onehalfspacing
+
+
+\frontmatter
+\includepdf{coversheet/coversheet.pdf}
+\include{structure/abstract}
+\input{structure/toc}
+
+
+\mainmatter
+\include{intro}
+\include{sdg}
+\include{usecases}
+\include{manual}
+\include{impl}
+\include{related}
+\include{summary}
+
+%\appendix
+%\include{schematics}
+
+
+\backmatter
+\include{structure/bibliography}
+\include{structure/dank}  % Danksagung
+\include{structure/ee}    % Eidesstattliche Erklärung
+
+\end{document}
