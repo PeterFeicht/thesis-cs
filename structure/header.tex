@@ -37,6 +37,10 @@
 %\usepackage{pst-plot}
 %\usepackage[off]{auto-pst-pdf}
 
+\usepackage{natbib}
+\setcitestyle{numbers,square,comma}
+\usepackage[nottoc,numbib]{tocbibind}
+
 % Links and PDF properties
 \usepackage[
   pdftitle={Dependency Browser for Program Comprehension and Change Impact Analysis of PLC Programs},
@@ -46,14 +50,7 @@
   colorlinks=true,
   unicode=true,
   pdfstartview=,
-  % default red
-  linkcolor=black,
-  % default cyan
-  filecolor=black,
-  % default red
-  menucolor=black,
-  % default magenta
-  urlcolor=black
+  allcolors=black
 ]{hyperref}
 
 % Section X.X in \autoref instead of Subsection X.X
