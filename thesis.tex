@@ -2,6 +2,8 @@
 \input{structure/header}
 \input{structure/defs}
 
+\addbibresource{structure/literature.bib}
+
 \begin{document}
 \onehalfspacing
 
@@ -26,7 +28,7 @@
 
 
 \backmatter
-\include{structure/bibliography}
+\printbibliography[heading=bibintoc,title={References}]
 \include{structure/dank}  % Danksagung
 \include{structure/ee}    % Eidesstattliche Erklärung
 
