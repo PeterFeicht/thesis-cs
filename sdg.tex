@@ -16,11 +16,6 @@ The following two sections will describe the implementation and construction of 
 explanation of its structural properties.
 
 
-\section{Structure}
-
-\Todo{Explain structure in detail}
-
-
 \section{Construction and Implementation}
 
 The construction of the SDG is covered in great detail in Andreas Grimmer's master thesis~\cite{GrimmerDA}, the 
@@ -40,8 +35,8 @@ The SDG is then created in two steps~\cite[ch.~6]{GrimmerDA}.
 \begin{enumerate}
   \item In the first step, a program dependence graph (PDG) is built for each procedure in the program. The nodes in 
   this graph represent statements and formal parameters, the edges represent the intra-procedural control and data 
-  dependencies between nodes. The PDGs are object-insensitive, which means they are computed once for each procedure 
-  rather than based on object instances.
+  dependencies. The PDGs are object-insensitive, which means they are computed once for each procedure rather than 
+  based on object instances.
   
   \item From the PDGs the object-sensitive SDG is created by instantiating each PDG according to the object instances 
   it is used in. Information about object instances is provided by Soot's points-to analysis. The PDGs are linked by 
@@ -62,7 +57,8 @@ point. \autoref{fig:sdg-class} shows a class diagram of all SDG classes.
   \item A node may have a seed condition associated with it, a Boolean expression that specifies for what feature 
   combinations dependent nodes are reachable.
   
-  \item A \lstinline|PDGNode| represents a statement in the program, whether it be conditional or not.
+  \item A \lstinline|PDGNode| represents a statement in the program, whether it be conditional or not (to determine 
+  that, information from the AST is necessary).
   
   \item There are three subclasses of \lstinline|SDGNode|, which represent procedure instances and their interactions. 
   Each \lstinline|SDGNode| has an owning \lstinline|Procedure| associated with it, which represents an instance of a 
@@ -77,14 +73,15 @@ point. \autoref{fig:sdg-class} shows a class diagram of all SDG classes.
     
     \item Calls between procedures are represented by \lstinline|ActivationNode|s. An activation node refers to the 
     statement that represents the call, has one or more procedures that are called (more than one procedure may be 
-    called, e.g. by setting an event), and has all actual parameters for the call attached to it.
+    called, e.g.\ by setting an event, which may trigger several event handlers), and has all actual parameters for the 
+    call attached to it.
   \end{itemize}
   
   \item An edge may have a presence condition associated with it, a Boolean expression that specifies for what feature 
   combinations the edge does exist.
   
   \item A \lstinline|ControlEdge| has an associated label, which in the case of conditional statements specifies 
-  whether the control dependency is for the true or false branch of the condition.
+  whether the control dependency is for the \lstinline|true| or \lstinline|false| branch of the condition.
 \end{itemize}
 
 \begin{figure}[hpb]
@@ -93,3 +90,12 @@ point. \autoref{fig:sdg-class} shows a class diagram of all SDG classes.
   \caption{Class diagram of the SDG classes}
   \label{fig:sdg-class}
 \end{figure}
+
+
+\section{Structure}
+
+This section will explain the structure of the underlying SDG in detail, and also the changes and simplifications made 
+for display to the user. Because not everything one might want to explore is represented in the SDG (for example, local 
+variables don't have a representation in the SDG) these additions are also mentioned.
+
+\Todo{Explain structure in detail}
