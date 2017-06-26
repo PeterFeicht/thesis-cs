@@ -1,21 +1,22 @@
 \chapter{Introduction}
 
 In configurable software systems that need to meet a wide range of customer requirements, variability is of great 
-importance. Understanding variable software is essential for its evolution, and there are several approaches for 
-dealing with the analysis of variable software systems. One important application of program analysis is change impact 
-analysis (CIA), the identification of the potential consequences of a change. An approach for change impact analysis of 
+importance. Understanding variable software is essential for its evolution and there are several approaches for dealing 
+with the analysis of variable software systems. One important application of program analysis is change impact analysis 
+(CIA), the identification of the potential consequences of a change. An approach for change impact analysis of 
 configurable software was developed by Angerer et al.\ \cite{DBLP:conf/kbse/AngererGPG15}. This approach uses a system 
 dependence graph to represent the whole program.
 
 A system dependence graph (SDG), introduced by Horwitz et al.\ \cite{DBLP:journals/toplas/HorwitzRB90}, encodes all 
 control and data dependencies in a whole program. An extension is the conditional system dependence graph (CSDG) 
-introduced by Angerer et al.\ \cite{DBLP:conf/splc/AngererPLGG14}, which also represents variability information in the 
-program. The SDG represents procedures by their program dependence graphs (PDGs). A PDG consists of a node for the 
+introduced by Angerer \cite{DBLP:conf/splc/AngererPLGG14}, which also represents variability information.
+
+The SDG represents procedures by their program dependence graphs (PDGs). A PDG consists of a node for the 
 procedure itself, a number of formal parameter nodes for parameters and global variables used in the procedure, and 
 nodes for every statement in the procedure. The nodes are connected by edges representing the control and data 
 dependencies inside the procedure. The SDG also represents the dependencies between procedures in the whole program, 
-based on one or more entry points into the program. The SDG is instance-based, which means, in object-oriented terms, 
-that for multiple instances of a class, a method called on different instances will be represented in the SDG by 
+based on one or more entry points into the program. Further, the SDG is instance-based, which means, in object-oriented 
+terms, that for multiple instances of a class a method called on different instances will be represented by 
 distinct instances of the method's PDG.
 
 Since SDGs can get very large---many hundreds of thousands of nodes 
@@ -38,15 +39,15 @@ determine which object instances might exist, and then the result may still be i
 This is however not a problem with the IEC 61131-3 family of languages~\cite{IEC61131:2003} used in this thesis, as 
 they don't support dynamic allocation. An instance in those languages is statically allocated by defining a variable of 
 a particular type. This makes it possible to statically determine all instances of objects that will exist at runtime, 
-which is necessary to determine the instances of graph elements needed for the SDG.
+making it possible to build an instance-based SDG.
 
 
 \section{The Tool}
 
-The tool developed in this thesis (the \emph{\SB}) implements interactive exploration of an SDG based on a chosen entry 
-point. An entry point can be---depending on the use case---a single statement, a procedure, or a variable. Based on the 
-selected entry point, control and data edges in the graph can be followed interactively. The tool was developed with a 
-number of use cases in mind.
+The tool developed in this thesis, named the \emph{\SB}, provides a means for interactive exploration of an SDG based 
+on a chosen entry point. An entry point can be---depending on the use case---a single statement, a procedure, or a 
+variable. Based on the selected entry point, control and data edges in the graph can be followed interactively. The 
+tool was developed with a number of use cases in mind.
 
 \begin{description}
   \item[Executions] Determine through which paths a statement or procedure can be executed. This effectively gives a 
@@ -59,21 +60,39 @@ number of use cases in mind.
   possibly affected by its change or execution. This can be used to determine whether a particular change will have any 
   unforeseen consequences.
   
-  \item[Change Cause] This is basically an inverse change impact analysis, which for any program element determines 
+  \item[Change Cause] This is basically an inverse change impact analysis. It determines for any program element
   other statements or variables which might have an impact on its value or execution.
 \end{description}
 
-The \SB was developed in the course of our cooperation with Keba AG\footnote{\url{http://www.keba.com}} through the 
-Christian Doppler Laboratory on Monitoring and Evolution of Very-Large-Scale Software Systems (CDL MEVSS for short).
-\enquote{Keba AG is a medium-sized company developing and producing tools, hardware, and software for the industrial 
-automation domain. An example system is KePlast, a comprehensive solution for the automation of injection molding 
-machines. The core of KePlast is a configurable control software framework which is implemented in a proprietary 
-dialect of the IEC 61131-3, a widely-adopted programming language standard for implementing industrial automation 
-systems.}~\cite[sec.~3.1]{DBLP:conf/splc/AngererPLGG14}
-
 The versions of the SDG and \SB introduced in this thesis work with the IEC 61131-3 languages only, because this was 
 the initial target of Florian Angerer's PhD work. However there is ongoing work to support analysis across language 
-boundaries~\cite{DBLP:conf/kbse/Angerer14}.
+boundaries as well~\cite{DBLP:conf/kbse/Angerer14}.
+
+
+\section{Context}
+
+The \SB was developed in the course of our cooperation with \href{http://www.keba.com}{Keba AG} at the Christian 
+Doppler Laboratory on Monitoring and Evolution of Very-Large-Scale Software Systems (CDL MEVSS for short).
+
+Keba AG is a company that makes tools, hardware, and software for the industrial automation domain. One of their major 
+products is the KePlast platform, a solution for the automation of injection molding machines. At its core KePlast has 
+a configurable control software framework implemented in Keba's proprietary dialect of the IEC 61131-3 language (see 
+also \cite[sec.~3.1]{DBLP:conf/splc/AngererPLGG14}).
+
+Module 2 of the lab investigates development and evolution in large software ecosystems such as those developed by 
+Keba.\footnote{See \url{http://mevss.jku.at/?page_id=654} for an overview of the motivation, goals, and results of CDL 
+MEVSS Module 2.}
+Key challenges in the development of such software systems are:
+
+\begin{itemize}
+  \item dealing with different variants and version of the software system;
+  \item assessing the impact of changes to different product variants; and
+  \item providing support to developers in evolving the system.
+\end{itemize}
+
+Our approach to these challenges is the FORCE environment~\cite{HinterreiterDA}, which provides feature-oriented and 
+role-specific views of the software ecosystem. Feature-oriented views help in breaking the system into manageable 
+pieces to work on, while role-specific views are useful to distinguish features managed by different teams.
 
 
 \section{Outline}
@@ -81,9 +100,8 @@ boundaries~\cite{DBLP:conf/kbse/Angerer14}.
 The remainder of the thesis is organized as follows.
 \Chapref{ch:sdg} will cover the SDG in more detail and explain its structural properties.
 In \autoref{ch:usecases} the use cases targeted by the \SB implementation will be introduced.
-A tutorial and user's manual on using the \SB, based on the use cases defined earlier, will be given in 
-\autoref{ch:manual}.
-\Chapref{ch:impl} will explain some of the implementation in detail and serve as an introduction to the system for 
-future developers.
+A tutorial and user's manual for the \SB, based on the use cases defined earlier, will be given in \autoref{ch:manual}.
+\Chapref{ch:impl} will explain some of the implementation details and serve as an introduction to the system for making
+future extensions.
 Finally, \autoref{ch:related} will give a short overview of related work and \autoref{ch:summary} will conclude the 
 thesis.
