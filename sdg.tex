@@ -19,16 +19,23 @@ explanation of its structural properties.
 \section{Construction and Implementation}
 
 The construction of the SDG is covered in great detail in Andreas Grimmer's master thesis~\cite{GrimmerDA}, the 
-following section will only give a brief overview.
+following section will only give a brief overview. \autoref{fig:toolchain} shows an overview of the analysis toolchain.
+
+\begin{figure}[ht]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/toolchain}
+  \caption{Overview of the analysis toolchain for building the SDG (taken from \cite{GrimmerDA})}
+  \label{fig:toolchain}
+\end{figure}
 
 The input for the SDG construction is a PLC program written in the IEC 61131-3 family of 
-languages~\cite{IEC61131:2003}, specifically a proprietary dialect of the language used by KEBA. The program is first 
+languages~\cite{IEC61131:2003}, specifically, a proprietary dialect of the language used by KEBA. The program is first 
 parsed into an abstract syntax tree (AST) which is based on the OMG ASTM~\cite{ASTM} and was extended to handle 
-language-specific features~\cite[ch.~4]{GrimmerDA}. 
+features specific to the IEC languages~\cite[ch.~4]{GrimmerDA}. 
 
-The ASTM representation is then used to generate Jimple code, an intermediate language representation used by the Soot 
-analysis framework~\cite{Soot}. Soot is used to perform control flow and points-to analyses, and it provides def-use 
-information and post-dominator trees used in the construction of the SDG.
+The ASTM representation serves as an input to generate Jimple code, an intermediate language representation used by the 
+Soot analysis framework~\cite{Soot}. Soot is used to perform control flow and points-to analyses, and it provides 
+def-use information and post-dominator trees used in the construction of the SDG.
 
 The SDG is then created in two steps~\cite[ch.~6]{GrimmerDA}.
 
@@ -38,18 +45,18 @@ The SDG is then created in two steps~\cite[ch.~6]{GrimmerDA}.
   dependencies. The PDGs are object-insensitive, which means they are computed once for each procedure rather than 
   based on object instances.
   
-  \item From the PDGs the object-sensitive SDG is created by instantiating each PDG according to the object instances 
+  \item The object-sensitive SDG is created by instantiating each PDG according to the object instances 
   it is used in. Information about object instances is provided by Soot's points-to analysis. The PDGs are linked by 
   introducing control edges that link calls to called procedures, and data edges between actual and formal parameter 
   nodes. Since a PLC program may have several entry points, an artificial procedure node is created for the 
-  \lstinline|main| procedure, which links to all actual entry points into the program.
+  \lstinline|main| procedure, which links to every possible entry point into the program.
 \end{enumerate}
 
-\subsection{SDG Classes}
+\subsection{SDG Classes} \label{sec:classes}
 
 The SDG is represented by classes \lstinline|DGNode| and \lstinline|DGEdge|, which are the abstract base classes for 
-different kinds of nodes and edges, and by the class \lstinline|SystemDependenceGraph| which specifies the main entry 
-point. \autoref{fig:sdg-class} shows a class diagram of all SDG classes.
+different kinds of nodes and edges, and by class \lstinline|SystemDependenceGraph|, which has the main entry point. 
+\autoref{fig:sdg-class} shows a class diagram of all SDG classes.
 
 \begin{itemize}
   \item Each node has a list of successors and predecessors, edges which link to and from other nodes, respectively.
@@ -68,7 +75,7 @@ point. \autoref{fig:sdg-class} shows a class diagram of all SDG classes.
     nodes associated with it.
     
     \item \lstinline|ExprNode| may represent formal or actual parameters, as well as global variables. In the case of a 
-    formal parameter node for a global variable accessed by a procedure, the node also refers to the actual node 
+    formal parameter node for a global variable accessed by the procedure, the node also refers to the actual node 
     representing the global variable itself.
     
     \item Calls between procedures are represented by \lstinline|ActivationNode|s. An activation node refers to the 
@@ -96,6 +103,36 @@ point. \autoref{fig:sdg-class} shows a class diagram of all SDG classes.
 
 This section will explain the structure of the underlying SDG in detail, and also the changes and simplifications made 
 for display to the user. Because not everything one might want to explore is represented in the SDG (for example, local 
-variables don't have a representation in the SDG) these additions are also mentioned.
+variables don't have a representation in the SDG) additions are also mentioned.
 
-\Todo{Explain structure in detail}
+% Alternative 1: several gradually bigger examples
+
+\subsection{Overview}
+
+The rough structure of the SDG is best explained by means of an example: the program in \autoref{lst:csdg-simple} uses 
+two load-time configuration options and contains conditional statements and method calls. The CSDG corresponding to the 
+program can be seen in \autoref{fig:csdg-simple}; note that this SDG is greatly simplified, but will suffice for a 
+rough overview.
+
+The procedure nodes in green correspond to the two methods in the program, \lstinline|main| and \lstinline|foo|. 
+Control edges in blue and red (for the \lstinline|true| and \lstinline|false| branch of a conditional, respectively) 
+connect control dependent statements to procedures and conditional statements. Note that conditional statements are 
+represented by statement nodes just like ordinary statements. The SDG itself does not contain any information about 
+whether a statement is a condition or not, this information is taken from the AST nodes linked to each statement node. 
+Dashed edges show the flow of data between different nodes, from the writing to the reading node.
+
+In the CSDG, edges are annotated with their respective presence conditions, which depend on the two configuration 
+options. Seed conditions (not shown in the figure), as mentioned in \autoref{sec:classes}, are present on the three 
+conditional nodes and serve as the initial conditions for the propagation of presence conditions. A detailed 
+explanation of the process of finding configuration options and augmenting the SDG with presence conditions can be 
+found in \cite{DBLP:conf/kbse/AngererGPG15}. Note that in this example only some of the presence conditions are shown.
+
+This can also serve as an example of using the CSDG for configuration-aware change impact analysis: say we want to know 
+whether a change to the highlighted return statement in method \lstinline|foo| would affect the print statement. Then 
+we can see that the conditions of the data edge from the return to the print statement ($ \lnot c_1 \land c_0 $) and 
+the print statement's incoming control edge ($ \lnot c_0 $) are disjoint, they cannot both be true
+(i.e.\ $ \left( \lnot c_1 \land c_0 \right) \land \lnot c_0 \implies \text{False} $). This means that a change to the 
+return statement does not affect the print statement, while we would have concluded that it does, had we ignored 
+variability information provided by the configuration options.
+
+\input{sdgs/simple-csdg.tex}
