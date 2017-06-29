@@ -1,0 +1,48 @@
+\usepackage{listings}
+\usepackage{tikz}
+
+\makeatletter
+
+\newenvironment{btHighlight}[1][]
+{\begingroup\tikzset{bt@Highlight@par/.style={#1}}\begin{lrbox}{\@tempboxa}}
+{\end{lrbox}\bt@HL@box[bt@Highlight@par]{\@tempboxa}\endgroup}
+
+\newcommand\btHL[1][]{%
+  \begin{btHighlight}[#1]\bgroup\aftergroup\bt@HL@endenv%
+}
+\def\bt@HL@endenv{%
+  \end{btHighlight}%   
+  \egroup
+}
+\newcommand{\bt@HL@box}[2][]{%
+  \tikz[#1]{%
+    \pgfpathrectangle{\pgfpoint{1pt}{0pt}}{\pgfpoint{\wd #2}{\ht #2}}%
+    \pgfusepath{use as bounding box}%
+    \node[
+      anchor=base west,
+      fill=Goldenrod!50,
+      outer sep=0pt,
+      inner xsep=1pt,
+      inner ysep=0pt,
+      minimum height=\ht\strutbox+1pt,
+      #1]{\raisebox{1pt}{\strut}\strut\usebox{#2}};
+  }%
+}
+
+\makeatother
+
+\lstset{language=Java,
+  columns=flexible,
+  basicstyle=\small\ttfamily,
+  stringstyle=\color{Plum}\slshape,
+  commentstyle=\color{OliveGreen}\itshape,
+  showstringspaces=false,
+  tabsize=2,
+  numbers=left,
+  numberstyle=\tiny,
+  numbersep=5pt,
+  frame=single,
+  escapeinside={(@}{@)},
+  moredelim=**[is][{\btHL[rounded corners=3pt]}]{@}{@},
+  moredelim=**[is][{\btHL[rounded corners=3pt, fill=white!0, draw=red,dashed,semithick]}]{`}{`}
+}
