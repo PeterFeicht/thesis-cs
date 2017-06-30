@@ -1,10 +1,10 @@
 \begin{lstlisting}[float=p,label=lst:csdg-simple,
   caption={Program using load-time variability resulting in the SDG in \autoref{fig:csdg-simple}}]
 class Main {
-  final boolean c0 = getConfiguration("c0");
-  final boolean c1 = getConfiguration("c1");
+  static final boolean c0 = getConfiguration("c0");
+  static final boolean c1 = getConfiguration("c1");
   
-  public void main(String[] args) {
+  public static void main(String[] args) {
     int res = 0;
     if(c0) {
       res = foo();
@@ -14,7 +14,7 @@ class Main {
     System.out.println(res);
   }
   
-  private int foo() {
+  private static int foo() {
     if(!c1)
       (@@)`return 1`;
     return 0;

@@ -56,7 +56,7 @@ The SDG is then created in two steps~\cite[ch.~6]{GrimmerDA}.
 
 The SDG is represented by classes \lstinline|DGNode| and \lstinline|DGEdge|, which are the abstract base classes for 
 different kinds of nodes and edges, and by class \lstinline|SystemDependenceGraph|, which has the main entry point. 
-\autoref{fig:sdg-class} shows a class diagram of all SDG classes.
+\autoref{fig:classes-sdg} shows a class diagram of all SDG classes.
 
 \begin{itemize}
   \item Each node has a list of successors and predecessors, edges which link to and from other nodes, respectively.
@@ -93,9 +93,9 @@ different kinds of nodes and edges, and by class \lstinline|SystemDependenceGrap
 
 \begin{figure}[hpb]
   \centering
-    \includegraphics[width=\textwidth]{bilder/sdg-class}
+    \includegraphics[width=\textwidth]{bilder/classes-sdg}
   \caption{Class diagram of the SDG classes}
-  \label{fig:sdg-class}
+  \label{fig:classes-sdg}
 \end{figure}
 
 
@@ -136,3 +136,41 @@ return statement does not affect the print statement, while we would have conclu
 variability information provided by the configuration options.
 
 \input{sdgs/simple-csdg.tex}
+
+\subsection{Calls}
+
+Let's first look at an example of function calls: the program in \autoref{lst:sdg-calls} calls two methods with one 
+parameter each, one of the methods uses a global variable as well. \autoref{fig:sdg-calls} show the corresponding SDG. 
+The SDG now contains two additional node types: activation nodes (call nodes) are shown in red, while three different 
+kinds of expression nodes are shown in orange.
+
+Global variables are represented in the SDG by expression nodes attached to the main procedure node via control edges. 
+These are semantically variable nodes.
+
+The parameters to procedures are represented by expression nodes (semantically those are formal parameter nodes) 
+attached to their procedure node via control edges (which semantically are parameter edges, shown dotdashed in the 
+figure). The procedure \lstinline|foo| has an additional formal parameter node that represents the global variable, 
+since that can be seen as a hidden parameter.
+
+A call is represented by an activation node, the parameters to the call are also represented by expression nodes (which 
+semantically are now actual parameter nodes), attached again via parameter edges. The statement causing a call links to 
+the activation node via a control edge, the activation node in turn is also linked to the activated procedures (which 
+may be more than one) via control edges (which can be seen semantically as call edges). Note however that one statement 
+calling more than one procedure (e.g.\ \lstinline|bar(foo(42));|) is still represented by multiple activation nodes in 
+the SDG; a single activation node for multiple activated procedures happens only in case of, for example, IEC events, 
+where one expression may cause a number of event handlers to be executed. If a procedure returns one or more values 
+(more than one value may be returned via output parameters in IEC procedures), these will be represented by formal 
+parameter nodes as well.
+
+Generally the \SB will not make a visual distinction between different kinds of control edges or parameter nodes, only 
+variable nodes will be distinguished from other expression nodes for clarity.
+
+Data flow, instead of going directly in and out of a procedure's PDG, now takes an indirection over the procedure's 
+formal parameter nodes. Generally there will be data edges connecting some nodes to an actual parameter node, which in 
+turn connects to the formal parameter node, which then connects to statements inside the procedure. Data flow out of 
+the procedure works much the same, with data edges connecting statements to formal parameter nodes for output 
+parameters. Note that in the IEC language there are also in-out parameters, which may have data flowing in both 
+directions. Similarly, reading from and writing to global variables takes an indirection over the corresponding formal 
+parameter node.
+
+\input{sdgs/calls.tex}
