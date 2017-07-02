@@ -139,7 +139,7 @@ variability information provided by the configuration options.
 
 \subsection{Calls}
 
-Let's first look at an example of function calls: the program in \autoref{lst:sdg-calls} calls two methods with one 
+Let's now look at an example of function calls: the program in \autoref{lst:sdg-calls} calls two methods with one 
 parameter each, one of the methods uses a global variable as well. \autoref{fig:sdg-calls} show the corresponding SDG. 
 The SDG now contains two additional node types: activation nodes (call nodes) are shown in red, while three different 
 kinds of expression nodes are shown in orange.
@@ -174,3 +174,59 @@ directions. Similarly, reading from and writing to global variables takes an ind
 parameter node.
 
 \input{sdgs/calls.tex}
+
+\subsection{Instances}
+
+In this next example the concept of an object-sensitive SDG will be illustrated: the program in 
+\autoref{lst:sdg-instances} calls instance methods on two different objects. \autoref{fig:sdg-instances} shows the 
+corresponding SDG.
+
+Up until now the examples only contained static variables and methods, there were no object instances involved. In this 
+example the class \lstinline|Main| contains a member variable, and there are two instances of that class (which for 
+simplicity are declared as static variables).
+
+The object-sensitive nature of the SDG means that there are two instances of method \lstinline|foo|'s PDG, one for each 
+instance of the class. Because of this, calls to the same method on different objects can be distinguished, since they 
+activate distinct procedures in the SDG. Member variables are represented by expression nodes attached to the main node 
+via control edges, semantically they are equivalent to global variables (so they also have a corresponding formal 
+parameter when used in a procedure).
+
+\input{sdgs/instances.tex}
+
+\subsection{Simplifications and Additions}
+
+The following simplifications and additions are made when displaying the SDG to the user, which is accomplished by 
+having an intermediate \emph{display graph} that wraps elements in the original SDG (see \autoref{ch:impl} for details).
+
+\begin{description}
+  \item[Local Variables] In all examples so far there were local variables, but they are not represented in the SDG. 
+  Instead, data flows directly between statements which make use of a variable or assign to it. Because in the 
+  \emph{Variable Assignment} use case the \SB should show assignments to local variables as well, the model used for 
+  display contains an additional kind of virtual node that wraps the AST definition node for the local variable 
+  together with a procedure node for the PDG instance. Assignments to the local variable are then located in the AST 
+  and virtual data edges added from the corresponding statements to the virtual variable node.
+
+  \item[Global Variables] As illustrated in Figures \ref{fig:sdg-calls} and \ref{fig:sdg-instances}, global and member 
+  variables are never written to or read from directly, instead there is always an indirection through a formal 
+  parameter node. Since this leads to lots of unnecessary formal parameter nodes which need to be displayed when a 
+  global or member variable is used in many procedures, the \SB does not display those. Instead, a synthetic data edge 
+  is introduced which links directly from a statement to the expression node representing the variable itself. The 
+  corresponding formal parameter is then just skipped excluded from display.
+  
+  \item[Container Nodes] The SDG itself does not have any kind of hierarchy, i.e.\ a node does not contain other nodes. 
+  In the context of IEC programs, however, hierarchy may be quite important. The \SB therefore introduces artificial 
+  container nodes, which can represent procedures or functional units (which are similar to packages in Java). There 
+  are container nodes representing each procedure instance (except for the main procedure), which contain all nodes in 
+  the corresponding PDG, as well as formal parameter nodes and the procedure node itself. These in turn are contained 
+  in nodes representing functional units.
+  
+  Container nodes are connected by artificial edges which are added whenever there are any edges between nodes within 
+  the container nodes.
+  
+  \item[Dummy Nodes] Since the user selects source code elements which may have more than one corresponding node in the 
+  SDG (e.g.\ more than one instance of a procedure), the \SB introduces dummy nodes indicating that there is more   
+  than one instance of something. They only serve as a means to group multiple instances of the same source code   
+  element for easier display and have no semantic meaning in the displayed SDG.
+  
+  Again, dummy nodes connect to the actual nodes via artificial edges.
+\end{description}
