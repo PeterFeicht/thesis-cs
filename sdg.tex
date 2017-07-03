@@ -1,16 +1,18 @@
 \chapter{The System Dependence Graph} \label{ch:sdg}
 
-As mentioned before, a system dependence graph (SDG) is a way to represent a program in its entirety as far as control 
-and data dependencies are concerned. Note however that the control flow itself is not encoded in the SDG. Consider, for 
-example, two statements in a procedure, which are control dependent on that procedure (meaning they will be executed 
-whenever the procedure is executed). The SDG does not contain any information about the order in which those two 
-statements will be executed when the procedure is called, this information is only available in the control flow graph.
+As mentioned before, a \emph{system dependence graph} (SDG) is a way to represent a program in its entirety as far as 
+control and data dependencies are concerned. Note however that the control flow itself is not encoded in the SDG. 
+Consider, for example, two statements in a procedure, which are control dependent on that procedure (meaning they will 
+be executed whenever the procedure is executed). The SDG does not contain any information about the order in which 
+those two statements will be executed when the procedure is called, this information is only available in the control 
+flow graph.
 
-The CSDG used here, in addition to control and data dependencies, also encodes variability in the form of conditions on 
-edges. Those so-called presence conditions are Boolean expressions that encode for which combinations of enabled 
-features an edge is present in the graph. A feature in this context is, for example, a configuration option that's read 
-from a global variable. Since these conditions are of no concern to the visualization and exploration of the SDG 
-itself, I will ignore them most of the time. They may however be useful in future additions to the \SB.
+The \emph{conditional system dependence graph} (CSDG) used here, in addition to control and data dependencies, also 
+encodes variability in the form of conditions on edges. Those so-called presence conditions are Boolean expressions 
+that encode for which combinations of enabled features an edge is present in the graph. A feature in this context is, 
+for example, a configuration option that's read from a global variable. Since these conditions are of no concern to the 
+visualization and exploration of the SDG itself, I will ignore them most of the time. They may however be useful in 
+future additions to the \SB.
 
 The following two sections will describe the implementation and construction of the SDG, and give a detailed 
 explanation of its structural properties.
@@ -30,7 +32,7 @@ following section will only give a brief overview. \autoref{fig:toolchain} shows
 
 The input for the SDG construction is a PLC program written in the IEC 61131-3 family of 
 languages~\cite{IEC61131:2003}, specifically, a proprietary dialect of the language used by KEBA. The program is first 
-parsed into an abstract syntax tree (AST) which is based on the OMG ASTM~\cite{ASTM} and was extended to handle 
+parsed into an \emph{abstract syntax tree} (AST) which is based on the OMG ASTM~\cite{ASTM} and was extended to handle 
 features specific to the IEC languages~\cite[ch.~4]{GrimmerDA}. 
 
 The ASTM representation serves as an input to generate Jimple code, an intermediate language representation used by the 
