@@ -294,7 +294,7 @@
             <y:Point x="225.80429294769763" y="80.83411109720686"/>
             <y:Point x="239.94642857142858" y="94.97624672093781"/>
           </y:Path>
-          <y:LineStyle color="#3366FF" type="line" width="2.0"/>
+          <y:LineStyle color="#3366FF" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -309,7 +309,7 @@
             <y:Point x="121.49999999999999" y="169.65049223704648"/>
             <y:Point x="106.49999999999999" y="184.65049223704648"/>
           </y:Path>
-          <y:LineStyle color="#FF6565" type="line" width="2.0"/>
+          <y:LineStyle color="#FF6565" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="CMU Sans Serif" fontSize="14" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="14.697113037109375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="center" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="26.541610717773438" x="-72.81508527663948" y="5.99938550275445">¬c0<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
@@ -332,7 +332,7 @@
             <y:Point x="300.58405485245953" y="184.65049223704648"/>
             <y:Point x="314.7261904761905" y="198.79262786077743"/>
           </y:Path>
-          <y:LineStyle color="#FF6565" type="line" width="2.0"/>
+          <y:LineStyle color="#FF6565" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="CMU Sans Serif" fontSize="14" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="14.697113037109375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="26.541610717773438" x="26.369077773321237" y="42.10582550169491">¬c0<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
@@ -350,7 +350,7 @@
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="0.0" sy="15.0" tx="0.0" ty="-15.0"/>
-          <y:LineStyle color="#3366FF" type="line" width="2.0"/>
+          <y:LineStyle color="#3366FF" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="CMU Sans Serif" fontSize="14" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="14.697113037109375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="41.0516357421875" x="-50.42760310097344" y="4.999997610009302">c0∨c1<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
@@ -373,7 +373,7 @@
             <y:Point x="253.2552308618262" y="528.5402706406081"/>
             <y:Point x="239.11309523809524" y="542.6824062643392"/>
           </y:Path>
-          <y:LineStyle color="#FF6565" type="line" width="2.0"/>
+          <y:LineStyle color="#FF6565" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -388,7 +388,7 @@
             <y:Point x="319.2552308618262" y="520.3490729310059"/>
             <y:Point x="305.11309523809524" y="534.4912085547368"/>
           </y:Path>
-          <y:LineStyle color="#3366FF" type="line" width="2.0"/>
+          <y:LineStyle color="#3366FF" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="CMU Sans Serif" fontSize="14" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="14.697113037109375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="50.38450622558594" x="-37.13650802435484" y="42.977483275782106">¬c1∧c0<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
@@ -411,7 +411,7 @@
             <y:Point x="352.93762628103093" y="169.65049223704648"/>
             <y:Point x="367.0797619047619" y="183.79262786077743"/>
           </y:Path>
-          <y:LineStyle color="#3366FF" type="line" width="2.0"/>
+          <y:LineStyle color="#3366FF" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="CMU Sans Serif" fontSize="14" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="14.697113037109375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="center" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="17.208740234375" x="48.212298729306156" y="6.608107755601367">c0<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
@@ -432,7 +432,7 @@
             <y:Point x="314.7261904761905" y="266.5685424949238"/>
             <y:Point x="335.6160209547354" y="287.4583729734687"/>
           </y:Path>
-          <y:LineStyle color="#3366FF" type="line" width="2.0"/>
+          <y:LineStyle color="#3366FF" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="CMU Sans Serif" fontSize="14" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="14.697113037109375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="50.38450622558594" x="7.3698822725479545" y="10.048962008820297">¬c0∧c1<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
@@ -450,7 +450,7 @@
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-4.5" sy="15.0" tx="0.0" ty="-15.0"/>
-          <y:LineStyle color="#3366FF" type="line" width="2.0"/>
+          <y:LineStyle color="#3366FF" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" configuration="AutoFlippingLabel" distance="2.0" fontFamily="CMU Sans Serif" fontSize="14" fontStyle="plain" hasLineColor="false" height="14.697113037109375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="17.208740234375" x="-8.604367937360479" y="29.523587398636778">c0<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
@@ -468,7 +468,7 @@
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="31.1864406380599" sy="15.0" tx="9.0" ty="-15.0"/>
-          <y:LineStyle color="#3366FF" type="line" width="2.0"/>
+          <y:LineStyle color="#3366FF" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" configuration="AutoFlippingLabel" distance="2.0" fontFamily="CMU Sans Serif" fontSize="14" fontStyle="plain" hasLineColor="false" height="14.697113037109375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="50.38450622558594" x="-25.192234731872873" y="5.0000054218728565">¬c0∧c1<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
@@ -493,7 +493,7 @@
             <y:Point x="311.2705627889675" y="367.3849236347635"/>
             <y:Point x="325.41269841269843" y="381.52705925849443"/>
           </y:Path>
-          <y:LineStyle color="#3366FF" type="line" width="2.0"/>
+          <y:LineStyle color="#3366FF" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" configuration="AutoFlippingLabel" distance="2.0" fontFamily="CMU Sans Serif" fontSize="14" fontStyle="plain" hasLineColor="false" height="14.697113037109375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="17.208740234375" x="-24.790815080915166" y="58.65285438485017">c0<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
@@ -514,7 +514,7 @@
             <y:Point x="133.55654761904762" y="66.69197547347592"/>
             <y:Point x="111.16488095238095" y="89.08364214014259"/>
           </y:Path>
-          <y:LineStyle color="#3366FF" type="line" width="2.0"/>
+          <y:LineStyle color="#3366FF" type="line" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -529,7 +529,7 @@
             <y:Point x="266.8976142143996" y="376.52705925849443"/>
             <y:Point x="281.03974983813055" y="362.3849236347635"/>
           </y:Path>
-          <y:LineStyle color="#008000" type="dashed" width="2.0"/>
+          <y:LineStyle color="#008000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -539,7 +539,7 @@
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-18.666666666666657" sy="-15.0" tx="-33.666666666666686" ty="15.020911073076064"/>
-          <y:LineStyle color="#008000" type="dashed" width="2.0"/>
+          <y:LineStyle color="#008000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -554,7 +554,7 @@
             <y:Point x="262.9893405286691" y="391.52705925849443"/>
             <y:Point x="291.80283259216117" y="362.7135671950024"/>
           </y:Path>
-          <y:LineStyle color="#008000" type="dashed" width="2.0"/>
+          <y:LineStyle color="#008000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" backgroundColor="#FFFFFF" configuration="AutoFlippingLabel" distance="2.0" fontFamily="CMU Sans Serif" fontSize="14" fontStyle="plain" hasLineColor="false" height="14.697113037109375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="50.38450622558594" x="-48.649354234514476" y="-147.14644105722266">¬c1∧c0<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
@@ -575,7 +575,7 @@
             <y:Point x="267.77976190476187" y="523.5402706406081"/>
             <y:Point x="216.35182660978904" y="472.7749373072749"/>
           </y:Path>
-          <y:LineStyle color="#008000" type="dashed" width="2.0"/>
+          <y:LineStyle color="#008000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -590,7 +590,7 @@
             <y:Point x="90.51977397139326" y="289.75498313298374"/>
             <y:Point x="74.33333333333333" y="273.5685424949238"/>
           </y:Path>
-          <y:LineStyle color="#008000" type="dashed" width="2.0"/>
+          <y:LineStyle color="#008000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:EdgeLabel alignment="center" configuration="AutoFlippingLabel" distance="2.0" fontFamily="CMU Sans Serif" fontSize="14" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="14.697113037109375" horizontalTextPosition="center" iconTextGap="4" modelName="custom" preferredPlacement="anywhere" ratio="0.5" textColor="#000000" verticalTextPosition="bottom" visible="true" width="50.38450622558594" x="-177.7100178612412" y="-17.60359840998501">¬c1∧c0<y:LabelModel>
               <y:SmartEdgeLabelModel autoRotationEnabled="false" defaultAngle="0.0" defaultDistance="10.0"/>
@@ -608,7 +608,7 @@
       <data key="d10">
         <y:PolyLineEdge>
           <y:Path sx="-46.779660957089845" sy="0.0" tx="64.33333333333331" ty="0.0"/>
-          <y:LineStyle color="#008000" type="dashed" width="2.0"/>
+          <y:LineStyle color="#008000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
@@ -623,7 +623,7 @@
             <y:Point x="56.30880229039762" y="169.65049223704648"/>
             <y:Point x="42.16666666666667" y="183.79262786077743"/>
           </y:Path>
-          <y:LineStyle color="#008000" type="dashed" width="2.0"/>
+          <y:LineStyle color="#008000" type="dashed" width="1.0"/>
           <y:Arrows source="none" target="standard"/>
           <y:BendStyle smoothed="false"/>
         </y:PolyLineEdge>
