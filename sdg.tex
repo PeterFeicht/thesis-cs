@@ -1,27 +1,31 @@
 \chapter{The System Dependence Graph} \label{ch:sdg}
 
-As mentioned before, a \emph{system dependence graph} (SDG) is a way to represent a program in its entirety as far as 
-control and data dependencies are concerned. Note however that the control flow itself is not encoded in the SDG. 
-Consider, for example, two statements in a procedure, which are control dependent on that procedure (meaning they will 
-be executed whenever the procedure is executed). The SDG does not contain any information about the order in which 
-those two statements will be executed when the procedure is called, this information is only available in the control 
-flow graph.
+A \emph{system dependence graph} (SDG) is a directed graph used to represent the control and data dependencies of a 
+program in its entirety. Note, however, that the control flow itself is not encoded in the SDG. Consider, for example, 
+two statements in a procedure, which are control dependent on that procedure (meaning they will be executed whenever 
+the procedure is executed). The SDG does not contain any information about the order in which those two statements will 
+be executed when the procedure is called, this information is only available in the control flow graph.
 
 The \emph{conditional system dependence graph} (CSDG) used here, in addition to control and data dependencies, also 
-encodes variability in the form of conditions on edges. Those so-called presence conditions are Boolean expressions 
-that encode for which combinations of enabled features an edge is present in the graph. A feature in this context is, 
-for example, a configuration option that's read from a global variable. Since these conditions are of no concern to the 
-visualization and exploration of the SDG itself, I will ignore them most of the time. They may however be useful in 
-future additions to the \SB.
+encodes variability in the form of conditions on edges. Those so-called \emph{presence conditions} are Boolean 
+expressions that encode for which combinations of enabled features an edge is present in the graph. A feature in this 
+context is, for example, a configuration option that is stored in a global variable. Since these conditions are of no 
+concern to the visualization and exploration of the SDG itself, I will ignore them most of the time. They may, however, 
+be useful in future additions to the \SB.
 
-The following two sections will describe the implementation and construction of the SDG, and give a detailed 
+The following two sections will describe the implementation and construction of the SDG and give a detailed 
 explanation of its structural properties.
 
 
 \section{Construction and Implementation}
 
-The construction of the SDG is covered in great detail in Andreas Grimmer's master thesis~\cite{GrimmerDA}, the 
-following section will only give a brief overview. \autoref{fig:toolchain} shows an overview of the analysis toolchain.
+The construction of the SDG is covered in great detail in Andreas Grimmer's master thesis~\cite{GrimmerDA}. The 
+following section will only give a brief overview.
+
+\autoref{fig:toolchain} shows an overview of the analysis toolchain. The input to the SDG construction is a PLC program 
+written in the IEC 61131-3 family of languages~\cite{IEC61131:2003}, specifically, a proprietary dialect of the 
+language used by KEBA. The program is first parsed to build an \emph{abstract syntax tree} (AST) which is based on the 
+OMG ASTM~\cite{ASTM} and was extended to handle features of the IEC languages~\cite[ch.~4]{GrimmerDA}.
 
 \begin{figure}[ht]
   \centering
@@ -29,11 +33,6 @@ following section will only give a brief overview. \autoref{fig:toolchain} shows
   \caption{Overview of the analysis toolchain for building the SDG (taken from \cite{GrimmerDA})}
   \label{fig:toolchain}
 \end{figure}
-
-The input for the SDG construction is a PLC program written in the IEC 61131-3 family of 
-languages~\cite{IEC61131:2003}, specifically, a proprietary dialect of the language used by KEBA. The program is first 
-parsed into an \emph{abstract syntax tree} (AST) which is based on the OMG ASTM~\cite{ASTM} and was extended to handle 
-features specific to the IEC languages~\cite[ch.~4]{GrimmerDA}. 
 
 The ASTM representation serves as an input to generate Jimple code, an intermediate language representation used by the 
 Soot analysis framework~\cite{Soot}. Soot is used to perform control flow and points-to analyses, and it provides 
@@ -51,7 +50,7 @@ The SDG is then created in two steps~\cite[ch.~6]{GrimmerDA}.
   it is used in. Information about object instances is provided by Soot's points-to analysis. The PDGs are linked by 
   introducing control edges that link calls to called procedures, and data edges between actual and formal parameter 
   nodes. Since a PLC program may have several entry points, an artificial procedure node is created for the 
-  \lstinline|main| procedure, which links to every possible entry point into the program.
+  \lstinline|main| procedure, which links to every possible entry point of the program.
 \end{enumerate}
 
 \subsection{SDG Classes} \label{sec:classes}
@@ -61,30 +60,33 @@ different kinds of nodes and edges, and by class \lstinline|SystemDependenceGrap
 \autoref{fig:classes-sdg} shows a class diagram of all SDG classes.
 
 \begin{itemize}
-  \item Each node has a list of successors and predecessors, edges which link to and from other nodes, respectively.
+  \item Each \lstinline|DGNode| has a list of successors and predecessors, edges which link to and from other nodes, 
+  respectively.
   
-  \item A node may have a seed condition associated with it, a Boolean expression that specifies for what feature 
-  combinations dependent nodes are reachable.
+  \item A \lstinline|DGNode| may have a seed condition associated with it, a Boolean expression that specifies for what 
+  feature combinations dependent nodes are reachable.
   
   \item A \lstinline|PDGNode| represents a statement in the program, whether it be conditional or not (to determine 
   that, information from the AST is necessary).
   
   \item There are three subclasses of \lstinline|SDGNode|, which represent procedure instances and their interactions. 
-  Each \lstinline|SDGNode| has an owning \lstinline|Procedure| associated with it, which represents an instance of a 
-  procedure much like a \lstinline|ProcedureNode|.
+  Each \lstinline|SDGNode| has an owning \lstinline|Procedure| associated with it which represents the instance and 
+  links to the corresponding AST node.
+  
   \begin{itemize}
     \item A \lstinline|ProcedureNode| represents an instance of a procedure and may have zero or more formal parameter 
     nodes associated with it.
     
-    \item \lstinline|ExprNode| may represent formal or actual parameters, as well as global variables. In the case of a 
+    \item \lstinline|ExprNode| represents formal or actual parameters, as well as global variables. In the case of a 
     formal parameter node for a global variable accessed by the procedure, the node also refers to the actual node 
     representing the global variable itself.
     
     \item Calls between procedures are represented by \lstinline|ActivationNode|s. An activation node refers to the 
-    statement that represents the call, has one or more procedures that are called (more than one procedure may be 
-    called, e.g.\ by setting an event, which may trigger several event handlers), and has all actual parameters for the 
-    call attached to it.
+    statement that represents the call, has one or more procedures that are called, and has all actual parameters for 
+    the call attached to it.
   \end{itemize}
+  
+  \item Some nodes have an AST node associated with them, for others the AST node can be accessed indirectly.
   
   \item An edge may have a presence condition associated with it, a Boolean expression that specifies for what feature 
   combinations the edge does exist.
@@ -93,7 +95,7 @@ different kinds of nodes and edges, and by class \lstinline|SystemDependenceGrap
   whether the control dependency is for the \lstinline|true| or \lstinline|false| branch of the condition.
 \end{itemize}
 
-\begin{figure}[hpb]
+\begin{figure}[htb]
   \centering
     \includegraphics[width=\textwidth]{bilder/classes-sdg}
   \caption{Class diagram of the SDG classes}
@@ -103,9 +105,9 @@ different kinds of nodes and edges, and by class \lstinline|SystemDependenceGrap
 
 \section{Structure}
 
-This section will explain the structure of the underlying SDG in detail, and also the changes and simplifications made 
-for display to the user. Because not everything one might want to explore is represented in the SDG (for example, local 
-variables don't have a representation in the SDG) additions are also mentioned.
+This section will explain the structure of the SDG in detail, and also the changes and simplifications made for display 
+to the user. Because not everything one might want to explore is represented in the SDG (for example, local variables 
+don't have a representation in the SDG), additions are also mentioned.
 
 % Alternative 1: several gradually bigger examples
 
@@ -119,7 +121,7 @@ rough overview.
 The procedure nodes in green correspond to the two methods in the program, \lstinline|main| and \lstinline|foo|. 
 Control edges in blue and red (for the \lstinline|true| and \lstinline|false| branch of a conditional, respectively) 
 connect control dependent statements to procedures and conditional statements. Note that conditional statements are 
-represented by statement nodes just like ordinary statements. The SDG itself does not contain any information about 
+represented by statement nodes just like ordinary statements; the SDG itself does not contain any information about 
 whether a statement is a condition or not, this information is taken from the AST nodes linked to each statement node. 
 Dashed edges show the flow of data between different nodes, from the writing to the reading node.
 
@@ -129,10 +131,10 @@ conditional nodes and serve as the initial conditions for the propagation of pre
 explanation of the process of finding configuration options and augmenting the SDG with presence conditions can be 
 found in \cite{DBLP:conf/kbse/AngererGPG15}. Note that in this example only some of the presence conditions are shown.
 
-This can also serve as an example of using the CSDG for configuration-aware change impact analysis: say we want to know 
-whether a change to the highlighted return statement in method \lstinline|foo| would affect the print statement. Then 
-we can see that the conditions of the data edge from the return to the print statement ($ \lnot c_1 \land c_0 $) and 
-the print statement's incoming control edge ($ \lnot c_0 $) are disjoint, they cannot both be true
+This example also illustrates how the CSDG may be used for configuration-aware change impact analysis: say we want to 
+know whether a change to the highlighted return statement in method \lstinline|foo| would affect the print statement. 
+Then we can see that the conditions of the data edge from the return to the print statement ($ \lnot c_1 \land c_0 $) 
+and the print statement's incoming control edge ($ \lnot c_0 $) are disjoint, they cannot both be true
 (i.e.\ $ \left( \lnot c_1 \land c_0 \right) \land \lnot c_0 \implies \text{False} $). This means that a change to the 
 return statement does not affect the print statement, while we would have concluded that it does, had we ignored 
 variability information provided by the configuration options.
@@ -142,36 +144,36 @@ variability information provided by the configuration options.
 \subsection{Calls}
 
 Let's now look at an example of function calls: the program in \autoref{lst:sdg-calls} calls two methods with one 
-parameter each, one of the methods uses a global variable as well. \autoref{fig:sdg-calls} show the corresponding SDG. 
+parameter each; one of the methods uses a global variable as well. \autoref{fig:sdg-calls} show the corresponding SDG. 
 The SDG now contains two additional node types: activation nodes (call nodes) are shown in red, while three different 
 kinds of expression nodes are shown in orange.
 
 Global variables are represented in the SDG by expression nodes attached to the main procedure node via control edges. 
-These are semantically variable nodes.
+Semantically these are \emph{variable nodes}.
 
-The parameters to procedures are represented by expression nodes (semantically those are formal parameter nodes) 
-attached to their procedure node via control edges (which semantically are parameter edges, shown dotdashed in the 
-figure). The procedure \lstinline|foo| has an additional formal parameter node that represents the global variable, 
+The parameters to procedures are represented by expression nodes (semantically those are \emph{formal parameter nodes}) 
+attached to their procedure node via control edges (which semantically are \emph{parameter edges}, shown dotdashed in 
+the figure). The procedure \lstinline|foo| has an additional formal parameter node that represents the global variable, 
 since that can be seen as a hidden parameter.
 
-A call is represented by an activation node, the parameters to the call are also represented by expression nodes (which 
-semantically are now actual parameter nodes), attached again via parameter edges. The statement causing a call links to 
-the activation node via a control edge, the activation node in turn is also linked to the activated procedures (which 
-may be more than one) via control edges (which can be seen semantically as call edges). Note however that one statement 
-calling more than one procedure (e.g.\ \lstinline|bar(foo(42));|) is still represented by multiple activation nodes in 
-the SDG; a single activation node for multiple activated procedures happens only in case of, for example, IEC events, 
-where one expression may cause a number of event handlers to be executed. If a procedure returns one or more values 
-(more than one value may be returned via output parameters in IEC procedures), these will be represented by formal 
-parameter nodes as well.
+A call is represented by an activation node and the parameters to the call are again represented by expression nodes 
+(which semantically are now\emph{ actual parameter nodes}), attached via parameter edges. The statement causing a call 
+is linked to the activation node via a control edge, the activation node in turn is also linked to the activated 
+procedures (which may be more than one) via control edges (which can be seen semantically as \emph{call edges}). Note, 
+however, that one statement calling more than one procedure (e.g.\ \lstinline|bar(foo(42));|) is still represented by 
+multiple activation nodes in the SDG; a single activation node for multiple activated procedures happens only in case 
+of, IEC events, where one expression may cause a number of event handlers to be executed. If a procedure returns one or 
+more values (more than one value may be returned via output parameters in IEC procedures), these will be represented by 
+formal parameter nodes as well.
 
-Generally the \SB will not make a visual distinction between different kinds of control edges or parameter nodes, only 
+Generally, the \SB will not make a visual distinction between different kinds of control edges or parameter nodes, only 
 variable nodes will be distinguished from other expression nodes for clarity.
 
 Data flow, instead of going directly in and out of a procedure's PDG, now takes an indirection over the procedure's 
-formal parameter nodes. Generally there will be data edges connecting some nodes to an actual parameter node, which in 
+formal parameter nodes. Generally, there will be data edges connecting some nodes to an actual parameter node, which in 
 turn connects to the formal parameter node, which then connects to statements inside the procedure. Data flow out of 
 the procedure works much the same, with data edges connecting statements to formal parameter nodes for output 
-parameters. Note that in the IEC language there are also in-out parameters, which may have data flowing in both 
+parameters. Note that in the \IEC language there are also in-out parameters, which may have data flowing in both 
 directions. Similarly, reading from and writing to global variables takes an indirection over the corresponding formal 
 parameter node.
 
@@ -198,22 +200,22 @@ parameter when used in a procedure).
 \subsection{Simplifications and Additions}
 
 The following simplifications and additions are made when displaying the SDG to the user, which is accomplished by 
-having an intermediate \emph{display graph} that wraps elements in the original SDG (see \autoref{ch:impl} for details).
+having an intermediate \emph{display graph} that wraps elements of the original SDG (see \autoref{ch:impl} for details).
 
 \begin{description}
-  \item[Local Variables] In all examples so far there were local variables, but they are not represented in the SDG. 
-  Instead, data flows directly between statements which make use of a variable or assign to it. Because in the 
+  \item[Local Variables] In all examples so far the program contained local variables, but they are not represented in 
+  the SDG. Instead, data flows directly between statements which make use of a variable or assign to it. Because in the 
   \emph{Variable Assignment} use case the \SB should show assignments to local variables as well, the model used for 
   display contains an additional kind of virtual node that wraps the AST definition node for the local variable 
   together with a procedure node for the PDG instance. Assignments to the local variable are then located in the AST 
-  and virtual data edges added from the corresponding statements to the virtual variable node.
+  and virtual data edges are added from the corresponding statements to the virtual variable node.
 
   \item[Global Variables] As illustrated in Figures \ref{fig:sdg-calls} and \ref{fig:sdg-instances}, global and member 
   variables are never written to or read from directly, instead there is always an indirection through a formal 
   parameter node. Since this leads to lots of unnecessary formal parameter nodes which need to be displayed when a 
   global or member variable is used in many procedures, the \SB does not display those. Instead, a synthetic data edge 
   is introduced which links directly from a statement to the expression node representing the variable itself. The 
-  corresponding formal parameter is then just skipped excluded from display.
+  corresponding formal parameter is then just excluded from display.
   
   \item[Container Nodes] The SDG itself does not have any kind of hierarchy, i.e.\ a node does not contain other nodes. 
   In the context of IEC programs, however, hierarchy may be quite important. The \SB therefore introduces artificial 
