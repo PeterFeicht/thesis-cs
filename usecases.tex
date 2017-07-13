@@ -1,3 +1,127 @@
 \chapter{Use Cases} \label{ch:usecases}
 
-TODO
+To guide and simplify the interactive exploration of the SDG, the \SB implements four concrete \emph{use cases}, which 
+were briefly explained in \autoref{sec:intro-tool} already. Those use cases were identified by Keba engineers to 
+provide potentially helpful insights when trying to fix certain problems, or when making changes in general. This 
+chapter will give an explanation of each use case and illustrate them with examples.
+
+A use case in this context is basically a strategy for deciding which parts of the whole SDG should be presented to the 
+user, together with a set of element types which are valid \emph{targets} (starting points) it can apply to (e.g.\ 
+statements, variables, procedures). The \emph{result} of a use case is that part of the SDG which would be visible to 
+the user if they were to expand every node in the graph (similar to a \emph{slice} of the 
+program~\cite{DBLP:journals/tse/Weiser84}).
+
+The \SB implements use cases in a modular way, which makes it easy to add new ones or add custom behavior to existing 
+ones. See \autoref{ch:impl} for a detailed explanation on that.
+
+
+\section{Executions}
+
+The targets of this use case are executable elements, i.e.\ statements and procedures. The goal is to find out how 
+something can be executed, that is, which execution paths in the program may lead to something being executed. The 
+result is a graph of all possible stack traces one could observe for the target, but also including conditional 
+statements between calls.
+
+\autoref{fig:sdg-executions_one} shows an example for the Executions of one instance of a particular statement (source 
+code in \autoref{lst:sdg-instances}, \autopageref{lst:sdg-instances}), with that part of the graph grayed out which 
+will not be displayed. \autoref{fig:sdg-executions_all} shows the same example for all instances of the statement (now 
+grouped by a \emph{dummy node}), which is usually the result when a statement is selected in the source code.
+
+The resulting graph contains all nodes which the target is directly or indirectly control-dependent on. Those nodes are 
+found by including all predecessor nodes which connect via a control edge to any node already in the graph.
+
+\begin{figure}[p]
+  \centering
+    \includegraphics[scale=0.6]{sdgs/executions_one}
+  \caption{Executions for one instance of a statement}
+  \label{fig:sdg-executions_one}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+    \includegraphics[scale=0.6]{sdgs/executions_all}
+  \caption{Executions for all instances of a statement, grouped by a dummy node}
+  \label{fig:sdg-executions_all}
+\end{figure}
+
+
+\section{Variable Assignment}
+
+The targets of this use case are variables of any kind (global, member, and local variables; formal parameters). The 
+goal is to find out which sequences of statements could cause a variable to change its value. The result is a graph 
+that contains the variable node (which may be an artificial node in case of a local variable), all statements directly 
+writing to that variable, and for those statements their \emph{Executions}.
+
+\autoref{fig:sdg-assignment_one} shows an example for the Variable Assignment of one instance of a member variable 
+(source code in \autoref{lst:sdg-instances}, \autopageref{lst:sdg-instances}). Note that the formal parameter node for 
+the member variable is not displayed, instead an artificial edge is added directly from the writing statement to the 
+variable node.
+
+For variables that are represented in the SDG (member and global variables, parameters to procedures), constructing the 
+graph for this use case is straight forward: just find predecessors which are statement nodes connected via data edges 
+(possibly ignoring intermediate formal parameter nodes), and from there continue as for \emph{Executions}. Local 
+variables, on the other hand, are not represented in the SDG. To be able to include local variables as well, the \SB 
+introduces an artificial node representing the local variable for each instance of the procedure declaring it. The AST 
+is then searched for each assignment, or use as a reference or output parameter, of the variable. From the resulting 
+AST nodes the corresponding statement nodes in the SDG are found and connected to the artificial node via synthetic 
+data edges.
+
+\begin{figure}[hp]
+  \centering
+    \includegraphics[scale=0.6]{sdgs/assignment_one}
+  \caption{Variable Assignment for one instance of a member variable}
+  \label{fig:sdg-assignment_one}
+\end{figure}
+
+
+\section{Change Impact}
+
+This use case targets all nodes in the SDG. The goal is to find all statements and variables which might be influenced 
+(whether a statement or procedure is executed; changes to a variable's value). The result is a graph which contains all 
+nodes directly or indirectly influenced by the execution of a statement or procedure, or by a variable's value.
+
+The example in \autoref{fig:sdg-changeimpact} shows a change impact for one return statement (source code in 
+\autoref{lst:sdg-calls}, \autopageref{lst:sdg-calls}). We can see that the return statement actually only influences 
+the return value, which in turn influences the value of variable \lstinline|res2| and the print statement (via the 
+highlighted edges). The change impact, however, also contains a lot of unrelated nodes, which is caused by the \SB 
+following all outgoing data and control edges, regardless of whether they are actually influenced by incoming edges.
+
+This issue with change impacts is caused in part by the \SB itself, in part by the SDG. The \SB already has information 
+on whether a statement is a conditional statement or not (because they are drawn differently), which could be used to 
+exclude certain control edges from the change impact. In this example, the statement influenced by the return value of 
+method \lstinline|bar| is not a conditional statement, so we know that the outgoing control edge is not influenced by 
+the incoming data edge, but the \SB does not use this information.
+
+\begin{figure}[hp]
+  \centering
+    \includegraphics[scale=0.6]{sdgs/changeimpact}
+  \caption{Change Impact for a return statement}
+  \label{fig:sdg-changeimpact}
+\end{figure}
+
+%\begin{figure}[hp]
+%  \centering
+%    \includegraphics[scale=0.6]{sdgs/changeimpact2}
+%  \caption{Change Impact showing a lot of unrelated nodes being included}
+%  \label{fig:sdg-changeimpact2}
+%\end{figure}
+
+
+\section{Change Cause}
+
+This use case is basically an inverse \emph{Change Impact}. It again targets all nodes in the SDG, the goal this time 
+being to find all statements and variables which might influence the value of a variable or whether a statement gets 
+executed. The result, therefore, is a graph which contains alls nodes directly or indirectly influencing the target.
+
+The example in \autoref{fig:sdg-changecause} shows a change cause for an assignment statement (source code in 
+\autoref{lst:sdg-calls}, \autopageref{lst:sdg-calls}). The statement is directly influenced by the conditional, because 
+it only gets executed if the conditional yields \lstinline|false|, and of course by the parameter which is assigned 
+from. Note that, as in the variable assignment example, the formal parameter node for the global variable is not 
+displayed, instead an artificial edge is added directly from the variable node to the reading statement.
+
+\begin{figure}[hp]
+  \centering
+    \includegraphics[scale=0.6]{sdgs/changecause}
+  \caption{Change Cause for an assignment}
+  \label{fig:sdg-changecause}
+\end{figure}
