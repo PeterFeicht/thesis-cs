@@ -21,7 +21,7 @@ distinct instances of the method's PDG.
 
 Since SDGs can get very large---many hundreds of thousands of nodes 
 \cite[sec.~4.3]{DBLP:conf/splc/AngererPLGG14}---using them for manual analysis in their entirety is impossible. There 
-are however a number of use cases where one would want to explore the SDG of a system manually, for example the 
+are, however, a number of use cases where one would want to explore the SDG of a system manually, for example the 
 aforementioned change impact analysis.
 
 
@@ -36,8 +36,8 @@ instances needs to be extracted from the source code alone, which might not be e
 languages like Java that support dynamic allocation of objects, complicated points-to analysis is necessary to 
 determine which object instances might exist, and then the result may still be inaccurate.
 
-This is however not a problem with the \IEC family of languages~\cite{IEC61131:2003} used in this thesis, as they don't 
-support dynamic allocation. An instance in those languages is statically allocated by defining a variable of a 
+This is, however, not a problem with the \IEC family of languages~\cite{IEC61131:2003} used in this thesis, as they 
+don't support dynamic allocation. An instance in those languages is statically allocated by defining a variable of a 
 particular type. This makes it possible to statically determine all instances of objects that will exist at runtime, 
 making it possible to build an instance-based SDG.
 
