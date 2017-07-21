@@ -7,3 +7,8 @@
 \newcommand{\matlab}[1]{\lstinline[language=Matlab,basicstyle=\ttfamily]{#1}}
 
 \newcommand{\Chapref}[1]{\hyperref[#1]{Chapter \ref*{#1}}}
+
+\newcommand*{\lstitem}[1]{
+  \setbox0\hbox{\lstinline{#1}}  
+  \item[\usebox0] 
+}

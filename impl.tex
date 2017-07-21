@@ -1,3 +1,93 @@
 \chapter{Implementation} \label{ch:impl}
 
+This chapter will describe the implementation of the system and will serve as an introduction for future developers.
+
+The \SB is implemented as a plugin for the Eclipse workbench. It depends on several other MEVSS plugins which provide 
+the AST classes and infrastructure for building the SDG, as well as an Eclipse editor for viewing IEC files. The \SB 
+plugin provides two views (the \emph{\SB} view and the \emph{Instance Hierarchy} view) and contributes items to the IEC 
+editor context menu.
+
+
+\section{Overview}
+
+This section will give an overview of the packages containing the \SB code and introduce important terminology along 
+the way. All packages are part of a common root package \lstinline|at.jku.mevss.featureide.browserview|. The root 
+package contains the \lstinline|DependencyBrowserPlugin| class, which represents a plugin instance and provides methods 
+for showing AST and SDG nodes in the IEC editor. Also part of the root package is the 
+\lstinline|DependencyBrowserController| class, which is the main entry point into the \SB, as well as the 
+\lstinline|SDGBrowserSourceProvider| class, which makes the current model available across the workbench.
+
+\begin{description}
+  \lstitem{model2} This package contains the use cases which derive from the \lstinline|AbstractModel| base class. A 
+  concrete use case is implemented by deriving from that base class and providing strategies for selecting nodes and 
+  edges to be displayed. The \lstinline|AbstractModel| instance then builds a \emph{display graph} based on these 
+  strategies.
+  
+  \lstitem{model2.graph} Classes in this package represent the \emph{display graph}, a model that abstracts from the 
+  underlying SDG and allows the addition of container nodes (for representing hierarchy) and artificial graph elements. 
+  This abstraction also allows the \SB to work with different SDG types without having to change the view 
+  implementation. All nodes in the display graph can be in an \emph{expanded} or \emph{collapsed} state, meaning that 
+  their logical successors will be shown or hidden, respectively. Furthermore, container nodes can be \emph{closed} so 
+  their children are hidden to reduce visual clutter.
+  
+  All display graph elements derive from the common base class \lstinline|DisplayElement| which provides support for 
+  attaching arbitrary properties. Classes \lstinline|DisplayNode| and \lstinline|DisplayEdge| represent nodes and 
+  edges, respectively, and also store layout information (position, size or bend points). The \lstinline|DisplayGraph| 
+  class stores all nodes and edges representing the graph and provides support for adding new elements. This class also 
+  produces graph change events and provides a means for getting the visible part of the graph (elements 
+  \emph{reachable} through expanded nodes).
+  
+  \lstitem{model2.hierarchy} The instance hierarchy is represented by the \lstinline|HierarchyTree| and 
+  \lstinline|HierarchyTreeNode| classes in this package. Every \lstinline|AbstractModel| exposes an instance hierarchy 
+  tree for its current graph contents.
+  
+  \lstitem{model2.layout} This package defines the classes used for the graph layout. The only implementation of 
+  interface \lstinline|GraphLayouter| is \lstinline|KLayLayouter|, which uses the \emph{KLay Layered}\footnotemark{} 
+  layout algorithm.
+  
+  \footnotetext{KLay Layered is a layer-based layout algorithm and part of the 
+  \href{https://rtsys.informatik.uni-kiel.de/confluence/}{KIELER project}, it is currently being integrated into 
+  Eclipse as part of the \href{http://www.eclipse.org/elk}{Eclipse Layout Kernel (ELK)}. For more information on KLay 
+  Layered see \url{https://rtsys.informatik.uni-kiel.de/confluence/display/KIELER/KLay+Layered} and 
+  \cite{DBLP:journals/vlc/SchulzeSH14}.}
+  
+  \lstitem{event} This package defines listener interfaces and event objects for several events: view changes (a new 
+  model being displayed), selection of a node in the view, changes to a \lstinline|DisplayGraph|, and changes to 
+  \lstinline|AbstractModel| properties.
+  
+  \lstitem{command} This package contains classes for interfacing an editor selection (path, source code range) with 
+  the \SB controller, as well as the class \lstinline|SDGBrowserCommand|, which represents a command that operates on 
+  display graph elements. Subpackage \lstinline|eclipse| defines Eclipse command handlers that plug into the IEC editor 
+  context menu, subpackage \lstinline|pipe| defines handlers that receive commands via a Windows named pipe.
+  
+  \lstitem{command.feature} The interfaces in this package allow an arbitrary graph to be displayed in the \SB by 
+  providing a \emph{feature} which may contain a number of \emph{slices} (sets of nodes to include in the graph). This 
+  feature will be used by the FORCE platform~\cite{HinterreiterDA} to display a graph of those parts of the program 
+  that belong to a certain feature.
+  
+  \lstitem{views} This package contains the views contributed to the Eclipse workbench. Class 
+  \lstinline|InstanceHierarchyView| and supporting classes implement the \emph{Instance Hierarchy} view, which displays 
+  the current model's hierarchy tree. The \lstinline|BrowserView| interface is used by the controller to render a graph 
+  and is implemented by the abstract \lstinline|AbstractBrowserView| class. This class is an Eclipse view part that 
+  provides several controls for setting model properties, but does not implement graph rendering itself.
+  
+  \lstitem{views.draw2d} This package and its subpackages contain the classes implementing the Draw2D\footnotemark{} 
+  \SB view. The \lstinline|Draw2DBrowserView| class is an implementation of \lstinline|AbstractBrowserView| which uses 
+  the \lstinline|GraphCanvas| class for rendering a display graph. The \lstinline|Resources| class exposes all the 
+  colors and dimensions used for the displayed graph elements via static methods, so its implementation may be changed 
+  in the future to allow Eclipse settings to be taken into account.
+  
+  \footnotetext{\href{https://www.eclipse.org/gef/draw2d/}{Draw2D} is a lightweight rendering toolkit on top of SWT, 
+  the UI toolkit used by Eclipse.}
+  
+  The \lstinline|GraphCanvas| class implements most of the heavy lifting to support transitions when graph elements 
+  enter or exit, implements zooming and hit testing, and handles events on displayed graph figures. The 
+  \lstinline|animation| subpackage contains classes for supporting animations of Draw2D figures; the 
+  \lstinline|overview| and \lstinline|tooltip| packages implement the scrollable overview thumbnail and tooltip 
+  controls, respectively; all figures and decorations used for rendering are part of the \lstinline|figures| package.
+\end{description}
+
+
+\section{Display Graph}
+
 TODO
