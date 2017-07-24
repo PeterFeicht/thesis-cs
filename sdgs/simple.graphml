@@ -271,7 +271,7 @@
             <y:ShapeNode>
               <y:Geometry height="30.0" width="56.0" x="258.44642857142856" y="563.2982599228759"/>
               <y:Fill color="#E0ECFF" transparent="false"/>
-              <y:BorderStyle color="#000000" type="dashed" width="1.0"/>
+              <y:BorderStyle color="#000000" type="line" width="2.0"/>
               <y:NodeLabel alignment="center" autoSizePolicy="content" fontFamily="CMU Typewriter Text" fontSize="12" fontStyle="plain" hasBackgroundColor="false" hasLineColor="false" height="13.942535400390625" horizontalTextPosition="center" iconTextGap="4" modelName="custom" textColor="#000000" verticalTextPosition="bottom" visible="true" width="54.372314453125" x="0.8138427734375" y="8.028732299804688">return 1<y:LabelModel>
                   <y:SmartNodeLabelModel distance="4.0"/>
                 </y:LabelModel>
