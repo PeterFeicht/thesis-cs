@@ -98,9 +98,9 @@ methods for showing AST and SDG nodes in the IEC editor. Also part of the root p
 \section{Model}
 
 The model part of the MVC architecture is mainly split in two parts, the display graph and the use cases. Each use case 
-is represented by a class which inherits from \lstinline|AbstractModel| and implements strategies for adding elements 
-to the graph when nodes are expanded by the user. Each model instance creates a display graph and populates it 
-according to the implemented strategy.
+is represented by a class which inherits from \lstinline|AbstractModel| and implements a strategy
+\cite[pp.~315--323]{designpatterns} for adding elements to the graph when nodes are expanded by the user. Each model 
+instance creates a display graph and populates it according to the implemented strategy.
 
 An overview of the model classes can be found in the class diagram in \autoref{fig:classes-model}, it shows roughly 
 what the structure of a model looks like. The subclasses of \lstinline|AbstractModel|, \lstinline|DisplayNode|, and 
@@ -125,7 +125,7 @@ As mentioned in the overview, the display graph is a model that wraps the SDG an
 uniform interface for the view to use.
 
 Class \lstinline|DisplayGraph| contains alls nodes and edges and maintains maps from keys to nodes and edges, 
-respectively. Keys are objects that identify a graph element uniquely and are used to determine whether a node or edge 
+respectively. Keys are objects that uniquely identify a graph element and are used to determine whether a node or edge 
 is in the graph. For example, a \lstinline|DGDisplayNode| is uniquely identified by the \lstinline|DGNode| it wraps, so 
 that is its key; a \lstinline|VariableDisplayNode| is uniquely identified by a \lstinline|DataDefinition| (the AST node 
 representing the local variable) and the containing SDG procedure node, so its key is a tuple of those two objects. 
@@ -147,11 +147,12 @@ filtered).
 
 Both display graph nodes and edges inherit from the abstract class \lstinline|DisplayElement|. This class declares 
 several abstract methods that all display element need to implement, two of which are \lstinline|getKey()| and 
-\lstinline|accept(GraphVisitor<T>)|. The former returns the unique key for any graph element, the latter is 
-implemented in every leaf class of the hierarchy and implements the visitor pattern for graph elements. Furthermore, 
-class \lstinline|DisplayElement| provides support for properties and tooltip data. Properties are used to store 
-arbitrary information with a graph element, for example whether a node is flagged or hidden, but is not meant to be 
-viewed by the user. Tooltip data, on the other hand, is meant to be shown to users in a tooltip for any graph element.
+\lstinline|accept(GraphVisitor<T>)|. The former returns the unique key for any graph element, the latter must be 
+implemented in every leaf class of the hierarchy and implements the visitor pattern \cite[pp.~331--344]{designpatterns} 
+for graph elements. Furthermore, class \lstinline|DisplayElement| provides support for properties and tooltip data. 
+Properties are used to store arbitrary information with a graph element (e.g.\ whether a node is flagged or hidden) 
+that is not meant to be viewed by the user. Tooltip data, on the other hand, is meant to be shown to users in a tooltip 
+for any graph element.
 
 \subsubsection{Nodes}
 
@@ -202,7 +203,8 @@ only: \lstinline|DGDisplayEdge|, and \lstinline|SyntheticDisplayEdge|. The latte
 
 Links are added to the graph via the protected method \lstinline|addLink| provided by class \lstinline|DisplayNode|. 
 Subclasses of \lstinline|DisplayNode| may provide concrete methods for creating edges from SDG edges or for creating 
-artificial edges.
+artificial edges. \lstinline|DGDisplayNode|, for example, provides a method for adding an edge from a 
+\lstinline|DGEdge|, and another method for adding a synthetic edge of arbitrary type to any other \lstinline|DGNode|.
 
 \subsection{Use Cases}
 
@@ -223,6 +225,11 @@ successors of a node to the graph when it is expanded, are \lstinline|hasSuccess
 \lstinline|expand(DisplayNode)|. Their default implementations delegate to overloads for concrete display node types, 
 subclasses need only implement (some of) them, depending on what types of nodes are created.
 
+The view uses \lstinline|hasSuccessors| to determine whether a node can be expanded to indicate this to the user. It 
+should follow the same logic as \lstinline|expand| so the view is consistent with the model semantics. Nodes are added 
+to the graph in the \lstinline|expand| method, whenever a user clicks on a node this method is called to add successors 
+of the clicked node to the graph.
+
 There are two model classes which do not correspond to one of the use cases defined in \autoref{ch:usecases}: 
 \lstinline|EmptyModel| and \lstinline|FeatureSliceModel|. The empty model is used whenever there are no instances of a 
 selection, or if a feature slice is empty, and contains one dummy node with an explanation. Class 
@@ -231,19 +238,38 @@ nodes. The current implementations of forward and backward slice models only fol
 
 %When a model is first created (which typically happens in factory methods) its graph must be populated with at least 
 %one node (the root node). In the case of multiple root nodes, a dummy node is used to group them.
+
 The other four \lstinline|AbstractModel| subclasses each implement one concrete use case of the \SB. They each override 
 only those methods for node types which actually occur in the graph, for example \lstinline|ExecutionsModel| never 
-creates any variable nodes so it doesn't overload \lstinline|hasSuccessors| and \lstinline|expand| for those nodes.
-
-The view uses \lstinline|hasSuccessors| to determine whether a node can be expanded to indicate this to the user. It 
-should follow the same logic as \lstinline|expand| so the view is consistent with the model semantics. Nodes are added 
-to the graph in the \lstinline|expand| method; whenever a user clicks on a node this method is called to add successors 
-of the clicked node to the graph.
+creates any variable nodes so it doesn't overload \lstinline|hasSuccessors| or \lstinline|expand| for those nodes.
 
 
 \section{Controller}
 
-TODO
+The controller is the main entry point into the \SB, its interface is defined in class 
+\lstinline|DependencyBrowserController| and implemented in \lstinline|BrowserControllerImpl|. A controller is created 
+for a specified \lstinline|BrowserView| instance but could easily be adapted to support multiple views. The controller 
+registers itself on the view to receive callbacks for events such as nodes or context menu items being selected (by 
+implementing the \lstinline|BrowserView.Callbacks| interface).
+
+The controller in this implementation has four responsibilities:
+\begin{enumerate}
+  \item maintaining a history of displayed models and navigating between them;
+  \item providing events for node selection and view changes;
+  \item creating and showing new models when requested; and
+  \item translating events from the view to actions on the model.
+\end{enumerate}
+
+Creating and showing new models is done whenever one of the \lstinline|display| methods on the controller is called 
+(there are display methods for each of the use cases, with overloads for AST and SDG nodes). The controller checks 
+whether the requested model is applicable to the specified node and performs preprocessing where necessary (e.g.\ 
+gathering SDG nodes for specified AST nodes). When new use cases are to be added, corresponding display methods need to 
+be added to the controller.
+
+Translating events from the view to actions on the model is straightforward, the only exception to the usual MVC 
+pattern is the \emph{model change request} callback. By using this callback the view can request from the controller 
+that it show another model than the current one, this is currently only used when a feature slice model is displayed. 
+The user can then select a different slice from the same feature, which results in a different model being shown.
 
 
 \section{View}
@@ -262,6 +288,11 @@ TODO
 \section{Commands}
 
 TODO
+
+
+\section{Summary}
+
+TODO Summarize where changes are necessary for adding new use cases or SDG types.
 
 
 \section{Future Work}
