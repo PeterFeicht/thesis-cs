@@ -5,13 +5,20 @@ This chapter will describe the implementation of the system and will serve as an
 The \SB is implemented as a plugin for the Eclipse workbench. It depends on several other MEVSS plugins which provide 
 the AST classes and infrastructure for building the SDG, as well as an Eclipse editor for viewing IEC files. The \SB 
 plugin provides two views (the \emph{\SB} view and the \emph{Instance Hierarchy} view) and contributes items to the IEC 
-editor context menu.
+editor context menu. \autoref{fig:architecture} shows an illustration of the plugin architecture.
 
 The plugin is implemented largely in a \emph{model-view-controller} (MVC) pattern, with the model being a use case 
 which contains a so-called \emph{display graph}; the display graph wraps the SDG to adapt it to the view and to augment 
 it with artificial elements. Since the Eclipse view is currently a singleton view, it instantiates the controller when 
-it is shown. The controller instantiates a model when it is asked to display a certain use case, it also keeps a 
-history of previous models so the user can navigate between them.
+it is shown. The controller instantiates a model when it is asked to display a certain use case (by an Eclipse command 
+or from IecEdit), it also keeps a history of previous models so the user can navigate between them.
+
+\begin{figure}[htb]
+  \centering
+    \includegraphics[scale=0.7]{bilder/architecture}
+  \caption{Overview of the plugin architecture}
+  \label{fig:architecture}
+\end{figure}
 
 
 \section{Overview}
@@ -40,8 +47,8 @@ methods for showing AST and SDG nodes in the IEC editor. Also part of the root p
   attaching arbitrary properties. Classes \lstinline|DisplayNode| and \lstinline|DisplayEdge| represent nodes and 
   edges, respectively, and also store layout information (position, size, bend points). The \lstinline|DisplayGraph| 
   class stores all nodes and edges representing the graph and provides support for adding new elements. This class also 
-  produces graph change events and provides a means for getting the visible part of the graph (elements 
-  \emph{reachable} through expanded nodes).
+  produces graph change events and provides a means for getting visible graph elements (which are \emph{reachable} 
+  through expanded nodes).
   
   \lstitem{model2.hierarchy} The instance hierarchy is represented by the \lstinline|HierarchyTree| and 
   \lstinline|HierarchyTreeNode| classes in this package. Every \lstinline|AbstractModel| exposes an instance hierarchy 
@@ -108,7 +115,7 @@ what the structure of a model looks like. The subclasses of \lstinline|AbstractM
 
 \begin{figure}[htb]
   \centering
-    \includegraphics[scale=0.6]{bilder/classes-model}
+    \includegraphics[scale=0.65]{bilder/classes-model}
   \caption{Class diagram overview of the model classes}
   \label{fig:classes-model}
 \end{figure}
@@ -215,7 +222,7 @@ name of the use case (i.e.\ the type of model). \autoref{fig:classes-usecase} sh
 
 \begin{figure}[htb]
   \centering
-    \includegraphics[scale=0.5]{bilder/classes-usecase}
+    \includegraphics[scale=0.6]{bilder/classes-usecase}
   \caption{Class hierarchy of use cases}
   \label{fig:classes-usecase}
 \end{figure}
@@ -250,7 +257,8 @@ The controller is the main entry point into the \SB, its interface is defined in
 \lstinline|DependencyBrowserController| and implemented in \lstinline|BrowserControllerImpl|. A controller is created 
 for a specified \lstinline|BrowserView| instance but could easily be adapted to support multiple views. The controller 
 registers itself on the view to receive callbacks for events such as nodes or context menu items being selected (by 
-implementing the \lstinline|BrowserView.Callbacks| interface).
+implementing the \lstinline|BrowserView.Callbacks| interface). \autoref{fig:arch-controller} illustrates that part of 
+the architecture.
 
 The controller in this implementation has four responsibilities:
 \begin{enumerate}
@@ -259,6 +267,13 @@ The controller in this implementation has four responsibilities:
   \item creating and showing new models when requested; and
   \item translating events from the view to actions on the model.
 \end{enumerate}
+
+\begin{figure}[htb]
+  \centering
+    \includegraphics[scale=0.6]{bilder/arch-controller}
+  \caption{Overview of the controller architecture}
+  \label{fig:arch-controller}
+\end{figure}
 
 Creating and showing new models is done whenever one of the \lstinline|display| methods on the controller is called 
 (there are display methods for each of the use cases, with overloads for AST and SDG nodes). The controller checks 
@@ -282,7 +297,14 @@ view accepts an object implementing this interface to send events to (typically 
 A partial implementation of the \lstinline|BrowserView| interface is \lstinline|AbstractBrowserView|, an Eclipse 
 \lstinline|ViewPart| that provides some of the logic and plugs into the Eclipse workbench. This singleton view 
 instantiates a controller when it is initialized and publishes that controller via the plugin class. This way the 
-controller can be accessed from anywhere in the plugin.
+controller can be accessed from anywhere in the plugin. \autoref{fig:arch-view} illustrates the view architecture.
+
+\begin{figure}[htb]
+  \centering
+    \includegraphics[scale=0.65]{bilder/arch-view}
+  \caption{Overview of the view architecture}
+  \label{fig:arch-view}
+\end{figure}
 
 The Eclipse view part provides a container for controls and defines a number of controls itself. Controls are provided 
 for navigating between models (forward, backward), changing whether flagged nodes are hidden, changing whether to dim 
@@ -307,7 +329,8 @@ classes \lstinline|NodeListener| and \lstinline|EdgeListener| registered on the 
 Layout and rendering is implemented in three phases in the \lstinline|GraphCanvas| class.
 \begin{enumerate}[start=0]
   \item Before the first phase, reachable graph elements are collected and the \emph{enter} and \emph{exit} sets 
-  calculated. The layout for the graph is calculated at this point.
+  calculated. The layout for the graph is calculated at this point using a \lstinline|GraphLayouter| implementation 
+  (currently only KLay is supported).
   
   \item In the \emph{pre-layout} phase figures are created for entering elements and child elements are reassigned to 
   entering containers if necessary.
@@ -350,4 +373,46 @@ so they may be used externally as well (for example in response to node selectio
 
 \section{Summary}
 
-TODO Summarize where changes are necessary for adding new use cases or SDG types.
+The purpose of this chapter was not to describe every detail of the implementation, but rather to give a course 
+overview of the general architecture and of possible places where extensions can be made. The code is well documented, 
+so together with this overview it should not be too difficult for new developers to grasp the system. This last section 
+will briefly summarize the changes necessary for two types of changes: adding new use cases and adding support for new 
+SDG types.
+
+The following changes are necessary to add a new use case.
+\begin{itemize}
+  \item Create a new class derived from \lstinline|AbstractModel|, or any existing use case, and implement the 
+  semantics by overriding \lstinline|hasSuccessors| and \lstinline|expand| as necessary. The new class will typically 
+  provide factory methods that create and initialize an instance from one or more AST or SDG nodes.
+  
+  \item Add \lstinline|display| methods to \lstinline|DependencyBrowserController| for the new use case, with overloads 
+  for AST nodes and typically also for SDG nodes.
+  
+  \item Add an Eclipse command handler for the new use case by inheriting from 
+  \lstinline|AbstractEditorCommandHandler|, and register that handler in the \SB \lstinline|plugin.xml| file.
+\end{itemize}
+
+Adding support for a new SDG type is a little more involved since existing use cases and several other classes need to 
+be updated as well. The following steps will likely be necessary (note that changes to the view are typically not 
+required).
+\begin{itemize}
+  \item Although not part of the \SB itself, most likely a new project builder needs to be added to the IEC editor core 
+  plugin, and support for the new SDG type needs to be added to \lstinline|IecProject|.
+  
+  \item Add new display graph nodes and edges for the new SDG types (typically subclasses of 
+  \lstinline|SDGDisplayNode|, \lstinline|SDGDisplayEdge|, and, depending on the SDG structure, of
+  \lstinline|ContainerDisplayNode|). The \lstinline|DisplayGraph| class will need to be extended with methods to add 
+  nodes and edges of the new types. New types for classes like \lstinline|SyntheticDisplayEdge| and 
+  \lstinline|VariableDisplayNode| may be needed as well.
+  
+  \item Add overloads for the new types to the \lstinline|GraphVisitor| class. Find all classes inheriting from 
+  \lstinline|GraphVisitor| and override the new methods where necessary.
+  
+  \item Handle new node types in all existing use cases where necessary, and also provide factory method overloads for 
+  creating models from the new node types.
+  
+  \item Add overloads of \lstinline|display| methods to \lstinline|DependencyBrowserController| for all existing use 
+  cases which can accept a node of the new SDG type. If necessary, change existing \lstinline|display| methods that 
+  accept AST nodes to create models for the new SDG type by default (i.e. map AST nodes to nodes of the new SDG instead 
+  of an old SDG).
+\end{itemize}
