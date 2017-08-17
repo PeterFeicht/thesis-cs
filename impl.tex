@@ -5,13 +5,13 @@ This chapter will describe the implementation of the system and will serve as an
 The \SB is implemented as a plugin for the Eclipse workbench. It depends on several other MEVSS plugins which provide 
 the AST classes and infrastructure for building the SDG, as well as an Eclipse editor for viewing IEC files. The \SB 
 plugin provides two views (the \emph{\SB} view and the \emph{Instance Hierarchy} view) and contributes items to the IEC 
-editor context menu. \autoref{fig:architecture} shows an illustration of the plugin architecture.
+editor context menu. \autoref{fig:architecture} illustrates the plugin architecture and interactions.
 
-The plugin is implemented largely in a \emph{model-view-controller} (MVC) pattern, with the model being a use case 
-which contains a so-called \emph{display graph}; the display graph wraps the SDG to adapt it to the view and to augment 
-it with artificial elements. Since the Eclipse view is currently a singleton view, it instantiates the controller when 
-it is shown. The controller instantiates a model when it is asked to display a certain use case (by an Eclipse command 
-or from IecEdit), it also keeps a history of previous models so the user can navigate between them.
+The plugin is implemented largely according to the \emph{model-view-controller} (MVC) pattern, with the model being a 
+use case which contains a so-called \emph{display graph}. The display graph wraps the SDG to adapt it to the view and 
+to augment it with artificial elements. Since the Eclipse view is currently a singleton view, it instantiates the 
+controller when it is shown. The controller instantiates a model when it is asked to display a certain use case (by an 
+Eclipse command or from IecEdit), it also keeps a history of previous models so the user can navigate between them.
 
 \begin{figure}[htb]
   \centering
@@ -24,19 +24,20 @@ or from IecEdit), it also keeps a history of previous models so the user can nav
 \section{Overview}
 
 This section will give an overview of the packages containing the \SB code and introduce important terminology along 
-the way. All packages are part of a common root package \lstinline|at.jku.mevss.featureide.browserview|. The root 
-package contains the \lstinline|DependencyBrowserPlugin| class, which represents the plugin instance and provides 
-methods for showing AST and SDG nodes in the IEC editor. Also part of the root package is the 
-\lstinline|DependencyBrowserController| class, which is the main entry point into the \SB, as well as the 
-\lstinline|SDGBrowserSourceProvider| class, which makes the current model available across the workbench.
+the way. All packages are part of a common root package \lstinline|at.jku.mevss.featureide.browserview|. 
 
 \begin{description}
-  \lstitem{model2} This package contains the use cases which derive from the \lstinline|AbstractModel| base class. A 
-  concrete use case is implemented by deriving from that base class and providing strategies for selecting nodes and 
-  edges to be displayed. The \lstinline|AbstractModel| instance then builds a \emph{display graph} based on these 
-  strategies.
+  \item The root package contains the \lstinline|DependencyBrowserPlugin| class, which represents the plugin instance 
+  and provides methods for showing AST and SDG nodes in the IEC editor. Also part of the root package is the 
+  \lstinline|DependencyBrowserController| class, which is the main entry point   into the \SB, as well as the 
+  \lstinline|SDGBrowserSourceProvider| class, which makes the current model available across the workbench.
   
-  \lstitem{model2.graph} Classes in this package represent the \emph{display graph}, the model that abstracts from the 
+  \lstitem{model2} This package contains the classes implementing the use cases which derive from the 
+  \lstinline|AbstractModel| base class. A concrete use case is implemented by deriving from that base class and 
+  providing strategies for selecting nodes and edges to be displayed. The \lstinline|AbstractModel| instance then 
+  builds a display graph based on these strategies.
+  
+  \lstitem{model2.graph} Classes in this package represent the display graph, the model that abstracts from the 
   underlying SDG and allows the addition of container nodes (for representing hierarchy) and artificial graph elements. 
   This abstraction also allows the \SB to work with different SDG types without having to change the view 
   implementation. All nodes in the display graph can be in an \emph{expanded} or \emph{collapsed} state, meaning that 
@@ -105,11 +106,11 @@ methods for showing AST and SDG nodes in the IEC editor. Also part of the root p
 \section{Model}
 
 The model part of the MVC architecture is mainly split in two parts, the display graph and the use cases. Each use case 
-is represented by a class which inherits from \lstinline|AbstractModel| and implements a strategy
+is represented by a class which inherits from \lstinline|AbstractModel| and implements the strategy pattern
 \cite[pp.~315--323]{designpatterns} for adding elements to the graph when nodes are expanded by the user. Each model 
 instance creates a display graph and populates it according to the implemented strategy.
 
-An overview of the model classes can be found in the class diagram in \autoref{fig:classes-model}, it shows roughly 
+An overview of the model classes can be found in the class diagram in \autoref{fig:classes-model}. It shows roughly 
 what the structure of a model looks like. The subclasses of \lstinline|AbstractModel|, \lstinline|DisplayNode|, and 
 \lstinline|DisplayEdge| are not shown and will be introduced in detail later on.
 
@@ -122,16 +123,16 @@ what the structure of a model looks like. The subclasses of \lstinline|AbstractM
 
 The \SB uses build infrastructure provided by an Eclipse plugin for viewing IEC files, which was developed in the 
 course of Alois Mühleder's bachelor thesis \cite{MuehlederBA} at the CDL MEVSS. The plugin is used to build the SDG 
-from an IEC project and also provides ways to navigate the IEC code (\emph{Open Declaration}, search for IEC 
+from an IEC project and also provides ways to navigate the IEC code (e.g.\ \emph{Open Declaration}, search for IEC 
 elements like types and variables). The \lstinline|IecProject| interface is part of that plugin and provides access to 
 the AST and SDG after a build is completed.
 
 \subsection{Display Graph}
 
 As mentioned in the overview, the display graph is a model that wraps the SDG and abstracts from it to provide a 
-uniform interface for the view to use.
+uniform interface for the view.
 
-Class \lstinline|DisplayGraph| contains alls nodes and edges and maintains maps from keys to nodes and edges, 
+Class \lstinline|DisplayGraph| contains all nodes and edges and maintains maps from keys to nodes and edges, 
 respectively. Keys are objects that uniquely identify a graph element and are used to determine whether a node or edge 
 is in the graph. For example, a \lstinline|DGDisplayNode| is uniquely identified by the \lstinline|DGNode| it wraps, so 
 that is its key; a \lstinline|VariableDisplayNode| is uniquely identified by a \lstinline|DataDefinition| (the AST node 
@@ -141,20 +142,20 @@ investigated, or a group thereof).
 
 The \lstinline|DisplayGraph| class also provides methods for adding new nodes to the graph, instances of node classes 
 are created internally as they are needed. This encapsulates creation of new nodes to make sure they are initialized 
-only once and to make sure there is only one instance of a node for a particular key; in case a node already exists in 
-the graph it is just returned. Edges are added to the graph only through nodes, which provide different methods to add 
-edges, depending on the node type. Since every edge in the graph is owned by a node there is no way to add edges to the 
-graph directly.
+only once and to make sure there is only one instance of a node for a particular key. That means in case a node already 
+exists in the graph it is just returned. Edges are added to the graph only through nodes, which provide different 
+methods to add edges, depending on the node type. Since every edge in the graph is owned by a node there is no way to 
+add edges to the graph directly.
 
 Finally, class \lstinline|DisplayGraph| provides method \lstinline|collectReachableGraph|, together with various 
 convenience methods wrapping it, which allows the currently reachable nodes and edges in the graph to be collected into 
 provided sets. A predicate may also be specified which is used to filter nodes and edges to be collected. A node in the 
-graph is reachable, if there is a path to it from the root node through expanded nodes only (over edges that are not 
-filtered).
+graph is reachable if there is a path to it from the root node through expanded nodes and edges that are not filtered 
+only.
 
 Both display graph nodes and edges inherit from the abstract class \lstinline|DisplayElement|. This class declares 
-several abstract methods that all display element need to implement, two of which are \lstinline|getKey()| and 
-\lstinline|accept(GraphVisitor<T>)|. The former returns the unique key for any graph element, the latter must be 
+several abstract methods that all classes for display elements need to implement, two of which are \lstinline|getKey()| 
+and \lstinline|accept(GraphVisitor<T>)|. The former returns the unique key for any graph element, the latter must be 
 implemented in every leaf class of the hierarchy and implements the visitor pattern \cite[pp.~331--344]{designpatterns} 
 for graph elements. Furthermore, class \lstinline|DisplayElement| provides support for properties and tooltip data. 
 Properties are used to store arbitrary information with a graph element (e.g.\ whether a node is flagged or hidden) 
@@ -177,7 +178,7 @@ methods \lstinline|getName()| and \lstinline|getType()| for the view.
 
 \lstinline|DisplayNode| has two abstract subclasses: \lstinline|VirtualDisplayNode| represents an artificial node that 
 has no corresponding SDG node; \lstinline|SDGDisplayNode| represents a node backed by an actual SDG node. The abstract 
-class \lstinline|ContainerDisplayNode| represents a container for other node, it adds insets for the layout and stores 
+class \lstinline|ContainerDisplayNode| represents a container for other nodes. It adds insets for the layout and stores 
 a set of child nodes.
 
 The only subclass of \lstinline|SDGDisplayNode| at the moment is \lstinline|DGDisplayNode|, which is backed by a 
@@ -229,8 +230,8 @@ name of the use case (i.e.\ the type of model). \autoref{fig:classes-usecase} sh
 
 The two most important methods in the \lstinline|AbstractModel| class, which implement a model's strategy for adding 
 successors of a node to the graph when it is expanded, are \lstinline|hasSuccessors(DisplayNode)| and 
-\lstinline|expand(DisplayNode)|. Their default implementations delegate to overloads for concrete display node types, 
-subclasses need only implement (some of) them, depending on what types of nodes are created.
+\lstinline|expand(DisplayNode)|. Their default implementations delegate to overloads for concrete display node types. 
+Subclasses need only implement (some of) them, depending on what types of nodes are created.
 
 The view uses \lstinline|hasSuccessors| to determine whether a node can be expanded to indicate this to the user. It 
 should follow the same logic as \lstinline|expand| so the view is consistent with the model semantics. Nodes are added 
@@ -255,7 +256,7 @@ creates any variable nodes so it doesn't overload \lstinline|hasSuccessors| or \
 
 The controller is the main entry point into the \SB, its interface is defined in class 
 \lstinline|DependencyBrowserController| and implemented in \lstinline|BrowserControllerImpl|. A controller is created 
-for a specified \lstinline|BrowserView| instance but could easily be adapted to support multiple views. The controller 
+for a specified \lstinline|BrowserView| instance, but could easily be adapted to support multiple views. The controller 
 registers itself on the view to receive callbacks for events such as nodes or context menu items being selected (by 
 implementing the \lstinline|BrowserView.Callbacks| interface). \autoref{fig:arch-controller} illustrates that part of 
 the architecture.
@@ -278,21 +279,22 @@ The controller in this implementation has four responsibilities:
 Creating and showing new models is done whenever one of the \lstinline|display| methods on the controller is called 
 (there are display methods for each of the use cases, with overloads for AST and SDG nodes). The controller checks 
 whether the requested model is applicable to the specified node and performs preprocessing where necessary (e.g.\ 
-gathering SDG nodes for specified AST nodes). When new use cases are to be added, corresponding display methods need to 
-be added to the controller.
+gathering SDG nodes for specified AST nodes).
+
+Thus, when new use cases are to be added, corresponding display methods need to be added to the controller.
 
 Translating events from the view to actions on the model is straightforward, the only exception to the usual MVC 
 pattern is the \emph{model change request} callback. By using this callback the view can request from the controller 
-that it show another model than the current one, this is currently only used when a feature slice model is displayed. 
+that it show another model than the current one. This is currently only used when a feature slice model is displayed. 
 The user can then select a different slice from the same feature, which results in a different model being shown.
 
 
 \section{View}
 
-The view is defined by interface \lstinline|BrowserView|, the main methods of this interface are 
+The view is defined by interface \lstinline|BrowserView|. The main methods of this interface are 
 \lstinline|setModel(AbstractModel)| and \lstinline|update()|. It also declares methods for showing notifications and a 
-context menu. Events generated by the view are communicated via the \lstinline|BrowserView.Callbacks| interface, the 
-view accepts an object implementing this interface to send events to (typically the controller).
+context menu. Events generated by the view are communicated via the \lstinline|BrowserView.Callbacks| interface, i.e.\ 
+the view accepts an object implementing this interface to send events to (typically the controller).
 
 A partial implementation of the \lstinline|BrowserView| interface is \lstinline|AbstractBrowserView|, an Eclipse 
 \lstinline|ViewPart| that provides some of the logic and plugs into the Eclipse workbench. This singleton view 
@@ -320,11 +322,11 @@ The class \lstinline|Draw2DBrowserView| is a concrete view implementation which 
 \lstinline|AbstractBrowserView| and uses Draw2D for rendering the graph via a \lstinline|GraphCanvas|.
 
 The \lstinline|GraphCanvas| class is responsible for tracking which display graph elements are displayed in the view 
-and maps display graph elements to their figures, it also provides hit testing (currently only used for finding an 
-element when hovering for a tooltip). When the displayed graph changes it provides sets of \emph{entering} and 
-\emph{exiting} elements (new elements not yet displayed and elements no longer in the new graph, respectively). The 
-\lstinline|GraphCanvas| also translates events on figures to calls on the view \lstinline|Callbacks| via listener 
-classes \lstinline|NodeListener| and \lstinline|EdgeListener| registered on the respective figures.
+and maps display graph elements to their figures. It also provides hit testing (currently only used for finding an 
+element for a tooltip when hovering over the view). When the displayed graph changes, it provides sets of 
+\emph{entering} and \emph{exiting} elements (new elements not yet displayed and elements no longer in the new graph, 
+respectively). The \lstinline|GraphCanvas| also translates events on figures to calls on the view \lstinline|Callbacks| 
+via listener classes \lstinline|NodeListener| and \lstinline|EdgeListener| registered on the respective figures.
 
 Layout and rendering is implemented in three phases in the \lstinline|GraphCanvas| class.
 \begin{enumerate}[start=0]
@@ -336,7 +338,7 @@ Layout and rendering is implemented in three phases in the \lstinline|GraphCanva
   entering containers if necessary.
   
   \item At the beginning of the \emph{layout} phase the current state of all figures is captured for the animation. 
-  Figures are assigned their new geometry (position, size or bend points) from the layout calculated earlier and their 
+  Figures get assigned their new geometry (position, size or bend points) from the layout calculated earlier and their 
   properties are updated from the corresponding display graph element. At the end of the layout phase the new state of 
   all figures is captured again and the transition animation starts.
   
@@ -350,7 +352,7 @@ display graph element. The \lstinline|draw2d.figures| package also contains seve
 and decorations.
 
 The \lstinline|draw2d.animation| package provides support for animations via classes \lstinline|Animation| and 
-\lstinline|Animator|, there are several concrete implementations for \lstinline|Animator| that support transitions for 
+\lstinline|Animator|. There are several concrete implementations for \lstinline|Animator| that support transitions for 
 edge routing and node bounds. Although Draw2D supports some primitive animations itself (in fact most of the animation 
 code is taken directly from this implementation), there is no support for asynchronous animations or for animating 
 anything other than layout and routing.
@@ -360,24 +362,26 @@ anything other than layout and routing.
 
 The command classes interface the \SB controller with other user interface components. The Eclipse commands inheriting 
 from \lstinline|AbstractEditorCommandHandler| work with selections in the IEC Editor, they are registered via the \SB 
-\lstinline|plugin.xml| as entries in the IEC Editor context menu. There are also handlers for commands received via the 
-IecEdit Windows named pipe interface, those inherit from \lstinline|PipeCommand|. This type of command usually takes as 
-its input a file path and source code range (the editor selection), maps it to AST nodes, and then invokes methods on 
-the \SB controller.
+\lstinline|plugin.xml| as entries in the IEC Editor context menu.
 
-Another kind of command is represented by class \lstinline|SDGBrowserCommand|, these commands work on display graph 
-elements and are mainly used by the \SB internally. There are a number of predefined commands which represent entries 
+The \SB also has an interface for use by external applications (e.g.\ Keba's IecEdit) which uses Windows named pipes. 
+Commands received via that interface are handled by classes inheriting from \lstinline|PipeCommand|. This type of 
+command usually takes a file path and source code range (the editor selection) as its input, maps it to AST nodes, and 
+then invokes methods on the \SB controller.
+
+Another kind of command is represented by class \lstinline|SDGBrowserCommand|. These commands work on display graph 
+elements and are mainly used internally by the \SB. There are a number of predefined commands which represent entries 
 in the context menus for nodes and edges in the \SB view. The base class and predefined commands are public, however, 
-so they may be used externally as well (for example in response to node selection events).
+so they may be used externally as well, for example in response to node selection events.
 
 
-\section{Summary}
+\section{Extensions}
 
 The purpose of this chapter was not to describe every detail of the implementation, but rather to give a course 
 overview of the general architecture and of possible places where extensions can be made. The code is well documented, 
 so together with this overview it should not be too difficult for new developers to grasp the system. This last section 
-will briefly summarize the changes necessary for two types of changes: adding new use cases and adding support for new 
-SDG types.
+will briefly summarize the changes necessary for two types of extensions: adding new use cases and adding support for 
+new SDG types.
 
 The following changes are necessary to add a new use case.
 \begin{itemize}
