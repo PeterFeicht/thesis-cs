@@ -51,6 +51,8 @@
 
 % Section X.X in \autoref instead of Subsection X.X
 \addto\extrasamerican{%
+  \def\chapterautorefname{Chapter}
+  \def\sectionautorefname{Section}
   \renewcommand{\subsectionautorefname}{\sectionautorefname}
   \renewcommand{\subsubsectionautorefname}{\sectionautorefname}
 }
