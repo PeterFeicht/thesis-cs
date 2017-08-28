@@ -41,9 +41,9 @@ Project. A project also needs to be rebuilt in IecEdit whenever it is moved to a
   source code may be located there or in any subdirectory.
   
   \item In case you have a standard project layout with HMI, the default source code locations may be used 
-  (\texttt{/Source/IMM/ieccontrol} and \texttt{/Source/view/viewKVS} for IEC and view code, respectively). Otherwise, 
-  uncheck the checkbox and specify the paths (relative to the project location selected earlier). If you don't have an 
-  HMI, leave that text box empty.
+  (\texttt{/prj/Source/IMM/ieccontrol} for IEC code and \texttt{/prj/Source/IMM/view/viewKVS} for view code). 
+  Otherwise, uncheck the checkbox and specify the paths (relative to the project location selected earlier). If you 
+  don't have HMI code, leave that text box empty.
 \end{enumerate}
 
 \begin{figure}[hp]
@@ -200,8 +200,8 @@ to it. Click on the node to expand it, the result should look like \autoref{fig:
   \label{fig:manual-executions2}
 \end{figure}
 
-After expanding all the nodes, the graph should look like \autoref{fig:manual-executions3}. Notice that there are now 
-two procedures involved, algorithm \lstinline|aExit1| is called by algorithm \lstinline|pActivator|, which is in turn 
+After expanding all nodes, the graph should look like \autoref{fig:manual-executions3}. Notice that there are now two 
+procedures involved, algorithm \lstinline|aExit1| is called by algorithm \lstinline|pActivator|, which is in turn 
 called by the artificial \lstinline|main| procedure. You can ignore the artificial main procedure most of the time, 
 it's just an artifact of the analysis. In this case it signals that \lstinline|pActivator| is an entry point of the 
 program (all entry points are called by \lstinline|main|).
@@ -217,7 +217,11 @@ program (all entry points are called by \lstinline|main|).
 
 \section{Additional Features} \label{sec:manual-features}
 
-TODO
+There are a number of additional feature which may prove helpful, especially when working with larger graphs.
+
+Hovering over a node or edge opens a tooltip, which shows some additional information about the element (see 
+\autoref{fig:manual-tooltip} for an example). For nodes of large statements (which are truncated so the node doesn't 
+get too large) the tooltip also contains the entire statement.
 
 \begin{figure}[hp]
   \centering
@@ -226,33 +230,59 @@ TODO
   \label{fig:manual-tooltip}
 \end{figure}
 
-\begin{figure}[hp]
+Right clicking on a node opens a context menu as seen in \autoref{fig:manual-node_context},which contains several 
+additional actions.
+
+\begin{description}
+  \item[Highlight Edges] highlights all edges connected to the node. This may be   helpful for following long edges 
+  that don't fit on the screen.
+  
+  \item[Show Source] opens the source code location associated with the node in the IEC editor, if possible 
+  (\autoref{fig:manual-show_source}. Note that not all nodes may have a source location associated with them. This can 
+  also be invoked by clicking on a node while holding the control key.
+  
+  \item[Show Instance Declaration] opens the source code location defining the object instance the node belongs to.
+  
+  \item[Set/Remove Flag] sets or removes the node flag (\autoref{fig:manual-flag}. Flagged nodes may be hidden by 
+  activating the corresponding checkbox (see \autoref{fig:manual-hide_flagged}).
+  
+  \item[Collapse All] collapses a node and all its successors at once. Note that this is different from simply 
+  collapsing a node, in which case the expansion state of all its predecessors is preserved.
+  
+  \item[Expand Next Level] expands all successors of the node.
+\end{description}
+
+The context menu also provides entries for executing a use case on the node.
+
+\begin{figure}[p]
   \centering
     \includegraphics[width=\textwidth]{bilder/manual-node_context}
-  \caption{A context menu provides additional actions on nodes}
+  \caption{A context menu provides actions on nodes}
   \label{fig:manual-node_context}
 \end{figure}
 
-\begin{figure}[hp]
-  \centering
-    \includegraphics[width=\textwidth]{bilder/manual-show_source}
-  \caption{Navigation from SDG to source code is easily accessible (Ctrl+Click on a node)}
-  \label{fig:manual-show_source}
-\end{figure}
-
-\begin{figure}[hp]
+\begin{figure}[p]
   \centering
     \includegraphics[width=\textwidth]{bilder/manual-flag}
   \caption{Nodes can be flagged when they have been examined}
   \label{fig:manual-flag}
 \end{figure}
 
-\begin{figure}[hp]
+\begin{figure}[p]
   \centering
     \includegraphics[width=\textwidth]{bilder/manual-hide_flagged}
   \caption{Flagged nodes can be hidden to reduce visual clutter}
   \label{fig:manual-hide_flagged}
 \end{figure}
+
+\begin{figure}[htp]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-show_source}
+  \caption{Navigation from SDG to source code is easily accessible (Ctrl+Click on a node)}
+  \label{fig:manual-show_source}
+\end{figure}
+
+% TODO Maybe mention pruning
 
 
 \section{Use Cases} \label{sec:manual-usecases}
