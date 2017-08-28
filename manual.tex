@@ -117,7 +117,10 @@ been built, you will be asked whether you want to build the project (\autoref{fi
 \end{figure}
 
 \clearpage
-The \SB operations can be accessed from the IEC editor context menu (see \autoref{fig:manual-editor_context}).
+The \SB operations can be accessed from the IEC editor context menu (see \autoref{fig:manual-editor_context}). Usually 
+you would select a source code element of interest (variable, statement, procedure) in the editor and then choose the 
+desired operation from the context menu. In case nothing is selected, the whole line will be selected automatically for 
+convenience.
 
 \begin{figure}[hp]
   \centering
@@ -126,12 +129,24 @@ The \SB operations can be accessed from the IEC editor context menu (see \autore
   \label{fig:manual-editor_context}
 \end{figure}
 
-\begin{figure}[hp]
+\autoref{fig:manual-executions1} shows the screen after choosing \emph{Show Executions} from the context menu. Notice 
+the whole statement is selected now. The \SB view shows a node for the selected statement \lstinline|i := 6|, and nodes 
+for all immediate predecessors (only \lstinline|cond1| int his case). The nodes are contained by a node that represents 
+the procedure those statements belong to (the algorithm \lstinline|aExit1|).
+
+\begin{figure}[htp]
   \centering
     \includegraphics[width=\textwidth]{bilder/manual-executions1}
-  \caption{TODO}
+  \caption{Screen after choosing an \SB operation}
   \label{fig:manual-executions1}
 \end{figure}
+
+You can navigate by panning the view: click and then drag with the middle mouse button anywhere in the graph. At the 
+top right corner of the \SB view you can see an overview thumbnail that shows the whole graph. This can also be used to 
+navigate large graphs: click anywhere in the thumbnail to center the view around that point.
+
+The \SB includes a legend as a quick reference of what the different colors and shapes of nodes and edges represent. 
+Click on the leftmost icon in the toolbar of the \SB view to show/hide it (see \autoref{fig:manual-legend}).
 
 \begin{figure}[hp]
   \centering
@@ -140,17 +155,62 @@ The \SB operations can be accessed from the IEC editor context menu (see \autore
   \label{fig:manual-legend}
 \end{figure}
 
+For details on the types of nodes and edges in the SDG, as well as its structure, refer to \autoref{ch:sdg}. There are 
+the following types of nodes in the SDG.
+
+\begin{itemize}
+  \item Procedure nodes represent executable procedures like functions, event handlers, process algorithms, etc. 
+  Procedure nodes may also be containers of the statements and variables within.
+  
+  \item Variable nodes represent all kinds of variables: local, global, and member variables, formal parameters and 
+  return values.
+  
+  \item Expression nodes represent actual parameter expressions.
+  
+  \item Activation nodes represent calls, as well as other kinds of activation (for example, setting an event will 
+  cause all its event handlers to be executed, but this is not a call in the traditional sense).
+  
+  \item Statement nodes and conditional statement nodes represent ordinary and conditional statements, respectively.
+\end{itemize}
+
+The SDG may contain two types of edges, two additional kinds are introduced by the \SB.
+
+\begin{itemize}
+  \item Control edges represent a control dependency, the target node will only be executed if the source node is as 
+  well. In case the source node is a conditional statement, the edge color will indicate whether the target node is 
+  executed if the condition is true or false.
+  
+  \item Data edges represent a data flow from the source node (e.g.\ a write to a variable) to the target node (e.g.\ a 
+  read from a variable).
+  
+  \item Compound edges between container nodes indicate more than one edge.
+  
+  \item A cyclic edge indicates an edge that introduces a cycle in the graph, it always leads to a node that has 
+  already been discovered earlier.
+\end{itemize}
+
+You will have noticed that the node for the conditional statement \lstinline|cond1| is of a darker shade than the 
+statement node (and shows a plus sign on its right side). This means that it can be expanded to reveal nodes connecting 
+to it. Click on the node to expand it, the result should look like \autoref{fig:manual-executions2}.
+
 \begin{figure}[hp]
   \centering
     \includegraphics[width=\textwidth]{bilder/manual-executions2}
-  \caption{TODO}
+  \caption{Nodes that can be expanded are of a darker shade and marked by a little plus sign on their right side}
   \label{fig:manual-executions2}
 \end{figure}
+
+After expanding all the nodes, the graph should look like \autoref{fig:manual-executions3}. Notice that there are now 
+two procedures involved, algorithm \lstinline|aExit1| is called by algorithm \lstinline|pActivator|, which is in turn 
+called by the artificial \lstinline|main| procedure. You can ignore the artificial main procedure most of the time, 
+it's just an artifact of the analysis. In this case it signals that \lstinline|pActivator| is an entry point of the 
+program (all entry points are called by \lstinline|main|).
 
 \begin{figure}[hp]
   \centering
     \includegraphics[width=\textwidth]{bilder/manual-executions3}
-  \caption{TODO}
+  \caption{This graph shows one procedure calling another, the main procedure signals an entry point.
+    Notice the small nodes, which represent the procedure they are contained in.}
   \label{fig:manual-executions3}
 \end{figure}
 
