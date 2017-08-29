@@ -81,7 +81,8 @@ The IEC editor allows navigation through the IEC code in a number of ways.
   Ctrl+Click on the name).
   
   \item Furthermore, searching for all references to a particular source code element in the whole project is 
-  implemented as well. This can be accessed in the Eclipse \emph{Search} menu or via the editor context menu.
+  implemented as well. This can be accessed in the Eclipse \emph{Search} menu or via the editor context menu 
+  (\autoref{fig:manual-search}, \autopageref{fig:manual-search}).
 \end{itemize}
 
 \begin{figure}[hp]
@@ -243,7 +244,7 @@ additional actions.
   
   \item[Show Instance Declaration] opens the source code location defining the object instance the node belongs to.
   
-  \item[Set/Remove Flag] sets or removes the node flag (\autoref{fig:manual-flag}. Flagged nodes may be hidden by 
+  \item[Set/Remove Flag] sets or removes the node flag (\autoref{fig:manual-flag}). Flagged nodes may be hidden by 
   activating the corresponding checkbox (see \autoref{fig:manual-hide_flagged}).
   
   \item[Collapse All] collapses a node and all its successors at once. Note that this is different from simply 
@@ -264,7 +265,7 @@ The context menu also provides entries for executing a use case on the node.
 \begin{figure}[p]
   \centering
     \includegraphics[width=\textwidth]{bilder/manual-flag}
-  \caption{Nodes can be flagged when they have been examined}
+  \caption{Alt+Click on a node to set/remove its flag}
   \label{fig:manual-flag}
 \end{figure}
 
@@ -275,11 +276,19 @@ The context menu also provides entries for executing a use case on the node.
   \label{fig:manual-hide_flagged}
 \end{figure}
 
-\begin{figure}[htp]
+\begin{figure}[p]
   \centering
     \includegraphics[width=\textwidth]{bilder/manual-show_source}
-  \caption{Navigation from SDG to source code is easily accessible (Ctrl+Click on a node)}
+  \caption{Navigation from SDG nodes to their source code is easily accessible (Ctrl+Click on a node, or from the 
+    context menu)}
   \label{fig:manual-show_source}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-search}
+  \caption{Search results for a local variable using \emph{References in Project}}
+  \label{fig:manual-search}
 \end{figure}
 
 % TODO Maybe mention pruning
