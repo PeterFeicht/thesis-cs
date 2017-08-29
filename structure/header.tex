@@ -1,10 +1,9 @@
 \documentclass[a4paper,11pt,twoside]{book}
 
-\usepackage[ngerman,american]{babel}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage[babel]{csquotes}
 \usepackage{lmodern}
+\usepackage[ngerman,american]{babel}
 \usepackage{hyphenat}
 \usepackage[babel]{microtype}
 
@@ -20,20 +19,16 @@
 ]{geometry}
 \usepackage[usenames,dvipsnames,table]{xcolor}
 
-\usepackage{amsmath, amssymb, amsfonts}
+\usepackage{amsmath}
 
-%\usepackage[squaren,thinqspace,thinspace]{SIunits}
 \usepackage[tableposition=top]{caption}
-
-\usepackage{pdfpages}               % Include PDF pages without overfull boxes
-
 \usepackage[inline]{enumitem}       % Make enumerations a little more compact
 \setlist{topsep=0pt,itemsep=2pt}
 \setlist[1]{labelindent=6pt}
 
+\usepackage{pdfpages}               % Include PDF pages without overfull boxes
 \usepackage{rotating}
 \usepackage{graphicx}
-%\usepackage{tikz-uml}
 
 % Links and PDF properties
 \usepackage[
@@ -42,9 +37,9 @@
   pdfsubject={Master Thesis},
   pdflang=en,
   colorlinks=true,
+  allcolors=black,
   unicode=true,
-  pdfstartview=,
-  allcolors=black
+  pdfstartview=
 ]{hyperref}
 
 \usepackage[url=false]{biblatex}
@@ -65,10 +60,6 @@
 \setlength{\parskip}{0.5em plus 2pt minus 1.5pt}
 \setlength{\headheight}{15pt}
 \setlength{\tabcolsep}{8pt}
-%\renewcommand\floatpagefraction{.95}
-%\renewcommand\topfraction{.95}
-%\renewcommand\bottomfraction{.95}
-%\renewcommand\textfraction{.05}
 
 % Header and footer
 \usepackage{fancyhdr}
