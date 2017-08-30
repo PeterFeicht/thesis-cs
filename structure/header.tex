@@ -76,8 +76,30 @@
   \let\ps@plain\ps@fancy
 \makeatother
 
-\usepackage{titlesec}
-\titleformat{\chapter}{\normalfont\huge\bfseries}{\thechapter}{1em}{}
+% Make chapter heading more compact
+\makeatletter
+\renewcommand{\@makechapterhead}[1]{%
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright \normalfont\huge\bfseries
+    \ifnum \c@secnumdepth >\m@ne
+      \if@mainmatter
+        \thechapter
+        \hskip 1em
+      \fi
+    \fi
+    \interlinepenalty\@M
+    #1\par\nobreak
+    \vskip 40\p@
+  }}
+
+\renewcommand{\@makeschapterhead}[1]{%
+  \vspace*{50\p@}%
+  {\parindent \z@ \raggedright \normalfont\huge\bfseries
+    \interlinepenalty\@M
+    #1\par\nobreak
+    \vskip 40\p@
+  }}
+\makeatother
 
 % Don't put "Chapter X" in the header
 \renewcommand{\chaptermark}[1]{\markboth{\MakeUppercase{\thechapter.\ #1}}{}}
