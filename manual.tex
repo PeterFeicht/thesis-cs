@@ -296,4 +296,55 @@ The context menu also provides entries for executing a use case on the node.
 
 \section{Use Cases} \label{sec:manual-usecases}
 
-TODO
+%This section will provide examples of problems that might be solved with the help of the \SB. The examples are based 
+%on the Pick-and-Place Unit (PPU), a well-known example of a manufacturing system for transporting and sorting 
+%different workpieces~\cite{PPU}.
+
+%The PPU system is implemented in the \IEC structured text language. The system consists of three function blocks: 
+%\lstinline|Crane|, \lstinline|Stack|, and \lstinline|PPUSystem| which connects the other two. For each of those 
+%function blocks, there is a corresponding block for the PPU simulation.
+
+This section will provide examples for using the \SB by means of some simple tasks. The examples are based on a test 
+project that covers most of the language features of Keba's \IEC implementation. This test project was chosen because 
+it is far more manageable than one of Keba's real systems, plus it doesn't contain any proprietary code.
+
+\subsubsection{Executions}
+
+The first task will be to find out what causes an event handler to be called. The file \texttt{EventCallTest0/AB1.pu} 
+defines the event algorithm \lstinline|MyEventAlgo| which handles events of type \lstinline|tevEvent1|. Since there is 
+no explicit call to \lstinline|MyEventAlgo|, we cannot find its activations by searching for references to its name. 
+Instead, the algorithm is called whenever an event of type \lstinline|tevEvent1| is set using \lstinline|SET_EVENT|. 
+
+This is one case where the \SB can be used for program comprehension rather than for solving a specific problem. After 
+selecting the event algorithm's name and selecting \emph{Show Executions} from the editor context menu, the \SB will 
+show a graph similar to \autoref{fig:manual-event1}.
+
+Notice that there is a call to \lstinline|MyEventAlgo| from the main procedure. This is caused by the SDG being built 
+in a conservative way regarding entry points. This means it is assumed that an event algorithm might be called, even if 
+no event of the right type is set in code (i.e.\ the SDG is an over approximation of the real program semantics).
+
+We can see that besides the call from \lstinline|main| there is one other activation in the function block 
+\lstinline|FBEventTrigger|. Expanding the activation node will show that this activation is caused by a call to 
+\lstinline|SET_EVENT|. If we were interested in what could lead to the execution of \lstinline|FBEventTrigger|, we can 
+just expand the graph further. This will show two calls from two different algorithms, \lstinline|MyAlgo0| and 
+\lstinline|MyAlgo1| (\autoref{fig:manual-event2}).
+
+Remember that you can navigate to the code for a node at any time by holding the control key and clicking on the node.
+
+\begin{figure}[p]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-event1}
+  \caption{SDG for an event algorithm showing two calls}
+  \label{fig:manual-event1}
+\end{figure}
+
+\begin{figure}[p]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-event2}
+  \caption{SDG showing two calls to the function block that sets the event}
+  \label{fig:manual-event2}
+\end{figure}
+
+% Variable Assignment: no good examples
+% Change Impact: GeneralTest/ABDelegateCall.pu(line 10)
+% Change Cause: GeneralTest/FBDelegateTarget.pu(line 8)
