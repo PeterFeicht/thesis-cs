@@ -3,7 +3,7 @@
 This chapter will describe the usage and features of the \SB in detail and serve as a user's manual. 
 \autoref{sec:manual-overview} will give an overview of the IEC editor and the process of creating the IEC project. 
 \autoref{sec:manual-sdg} will cover the steps needed to use the \SB. A detailed description of the \SB features will be 
-given in \autoref{sec:manual-features}. Finally \autoref{sec:manual-usecases} will cover each use case and include 
+given in \autoref{sec:manual-features}. Finally \autoref{sec:manual-examples} will cover each use case and include 
 examples of problems that might be solved.
 
 
@@ -93,7 +93,7 @@ The IEC editor allows navigation through the IEC code in a number of ways.
 \end{figure}
 
 
-\section{Using the SDG} \label{sec:manual-sdg}
+\section{Using the \SB} \label{sec:manual-sdg}
 
 Everything shown so far works without manually building the Eclipse project, since the source code is automatically 
 parsed once any of the project's files are opened. However, the SDG must be built before the \SB can be used. For large 
@@ -163,10 +163,9 @@ the following types of nodes in the SDG.
   \item Procedure nodes represent executable procedures like functions, event handlers, process algorithms, etc. 
   Procedure nodes may also be containers of the statements and variables within.
   
-  \item Variable nodes represent all kinds of variables: local, global, and member variables, formal parameters and 
-  return values.
+  \item Variable nodes represent all kinds of variables: local, global, and member variables; return values.
   
-  \item Expression nodes represent actual parameter expressions.
+  \item Expression nodes represent formal parameters and actual parameter expressions.
   
   \item Activation nodes represent calls, as well as other kinds of activation (for example, setting an event will 
   cause all its event handlers to be executed, but this is not a call in the traditional sense).
@@ -294,7 +293,7 @@ The context menu also provides entries for executing a use case on the node.
 % TODO Maybe mention pruning
 
 
-\section{Use Cases} \label{sec:manual-usecases}
+\section{Examples} \label{sec:manual-examples}
 
 %This section will provide examples of problems that might be solved with the help of the \SB. The examples are based 
 %on the Pick-and-Place Unit (PPU), a well-known example of a manufacturing system for transporting and sorting 
@@ -308,20 +307,28 @@ This section will provide examples for using the \SB by means of some simple tas
 project that covers most of the language features of Keba's \IEC implementation. This test project was chosen because 
 it is far more manageable than one of Keba's real systems, plus it doesn't contain any proprietary code.
 
-\subsubsection{Executions}
+The resulting graph for each use case will only be outlined, refer to \autoref{ch:usecases} for the exact semantics of 
+each use case.
+
+\subsection*{Executions}
 
 The first task will be to find out what causes an event handler to be called. The file \texttt{EventCallTest0/AB1.pu} 
 defines the event algorithm \lstinline|MyEventAlgo| which handles events of type \lstinline|tevEvent1|. Since there is 
 no explicit call to \lstinline|MyEventAlgo|, we cannot find its activations by searching for references to its name. 
-Instead, the algorithm is called whenever an event of type \lstinline|tevEvent1| is set using \lstinline|SET_EVENT|. 
+Instead, the algorithm is called whenever an event of type \lstinline|tevEvent1| is set using \lstinline|SET_EVENT|.
 
-This is one case where the \SB can be used for program comprehension rather than for solving a specific problem. After 
+This is a case where the \SB can be used for program comprehension rather than solving a specific problem. After 
 selecting the event algorithm's name and selecting \emph{Show Executions} from the editor context menu, the \SB will 
 show a graph similar to \autoref{fig:manual-event1}.
 
+The graph shows control dependencies and follows them backwards. This means it will show all conditional statements on 
+which the target directly or indirectly depends, and all procedure calls that lead to their execution.
+
 Notice that there is a call to \lstinline|MyEventAlgo| from the main procedure. This is caused by the SDG being built 
 in a conservative way regarding entry points. This means it is assumed that an event algorithm might be called, even if 
-no event of the right type is set in code (i.e.\ the SDG is an over approximation of the real program semantics).
+no event of the right type is set in code (i.e.\ the SDG is an over approximation of the real program semantics). In 
+other words, every event handler is considered as an entry point, as are postupdate algorithms and autostarted process 
+algorithms.
 
 We can see that besides the call from \lstinline|main| there is one other activation in the function block 
 \lstinline|FBEventTrigger|. Expanding the activation node will show that this activation is caused by a call to 
@@ -345,6 +352,43 @@ Remember that you can navigate to the code for a node at any time by holding the
   \label{fig:manual-event2}
 \end{figure}
 
-% Variable Assignment: no good examples
+\subsection*{Variable Assignment}
+
+In this task we want to find all statement that modify the variable \lstinline|i| in algorithm 
+\lstinline|ABStructControl.aExit1|. We already saw earlier that we can use \emph{References in Project} to look for its 
+references (\autoref{fig:manual-search}). But now we would like a more convenient way of showing which statements not 
+only reference but modify the variable, and also why those statements are executed.
+
+\autoref{fig:manual-assign1} shows the graph after selecting \emph{Show Variable Assignments} from the editor context 
+menu, with the cursor placed in line 17. In this simple case all assignments are in the same procedure, but they might 
+as well be scattered around the program (e.g.\ for global variables). They might not even be obvious in the case of 
+system variable aliases bound to different system variables depending on the configuration.
+
+\begin{figure}[hpb]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-assign1}
+  \caption{SDG showing all assignments of a variable}
+  \label{fig:manual-assign1}
+\end{figure}
+
+Since this use case just shows the \emph{Executions} for each of the modifying statements, we can investigate what 
+leads to their execution the same as before. \autoref{fig:manual-assign2} shows the graph with some of the nodes 
+expanded, illustrating the conditions that lead to the assignment of the value 5 or 6 to \lstinline|i|.
+
+We can also see that the algorithm \lstinline|aExit1| is called from \lstinline|pActivator|, which is an entry point to 
+the program. Notice also that \lstinline|aExit1| is always called, since there are no conditional statements between 
+\lstinline|main| and its activation node.
+
+\begin{figure}[htp]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-assign2}
+  \caption{SDG showing the conditions that lead to two assignment statements}
+  \label{fig:manual-assign2}
+\end{figure}
+
+\subsection*{Change Impact}
+
+TODO
+
 % Change Impact: GeneralTest/ABDelegateCall.pu(line 10)
 % Change Cause: GeneralTest/FBDelegateTarget.pu(line 8)
