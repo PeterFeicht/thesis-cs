@@ -217,6 +217,9 @@ program (all entry points are called by \lstinline|main|).
 
 \section{Additional Features} \label{sec:manual-features}
 
+% TODO Zooming
+% TODO Back/Forward
+
 There are a number of additional feature which may prove helpful, especially when working with larger graphs.
 
 Hovering over a node or edge opens a tooltip, which shows some additional information about the element (see 
@@ -290,7 +293,7 @@ The context menu also provides entries for executing a use case on the node.
   \label{fig:manual-search}
 \end{figure}
 
-% TODO Maybe mention pruning
+% TODO Pruning
 
 
 \section{Examples} \label{sec:manual-examples}
@@ -354,7 +357,7 @@ Remember that you can navigate to the code for a node at any time by holding the
 
 \subsection*{Variable Assignment}
 
-In this task we want to find all statement that modify the variable \lstinline|i| in algorithm 
+In this task we want to find all statements that modify the variable \lstinline|i| in algorithm 
 \lstinline|ABStructControl.aExit1|. We already saw earlier that we can use \emph{References in Project} to look for its 
 references (\autoref{fig:manual-search}). But now we would like a more convenient way of showing which statements not 
 only reference but modify the variable, and also why those statements are executed.
@@ -388,7 +391,43 @@ the program. Notice also that \lstinline|aExit1| is always called, since there a
 
 \subsection*{Change Impact}
 
-TODO
+We now want to know how the value of the variable \lstinline|ABDelegateCall.var0| can influence the program. 
+\autoref{fig:manual-ci1} shows the graph after selecting \emph{Show Change Impact} from the editor context menu. There 
+are some redundant data edges (as we will see when exploring the graph further). We can see two edges to statements 
+\lstinline|tmp := (in^ * 10)|, which will be explained shortly; one to a call where the address of \lstinline|var0| is 
+used as a parameter; and one edge to the corresponding actual parameter of that call.
 
-% Change Impact: GeneralTest/ABDelegateCall.pu(line 10)
+\begin{figure}[hpb]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-ci1}
+  \caption{SDG showing the change impact for a variable}
+  \label{fig:manual-ci1}
+\end{figure}
+
+Since data is carried by parameters the next step will be to expand the actual parameter node, resulting in the graph 
+shown in \autoref{fig:manual-ci2}. We can see that data flows from the actual parameter to formal parameter 
+\lstinline|ref| in procedure \lstinline|FBDelegator|, which is then used in a statement. Examining the code reveals 
+that the two actual parameters inside \lstinline|FBDelegator| result from the fact that the called procedure 
+\lstinline|fbTarget| might have two values (i.e.\ sort of a function pointer).
+
+\begin{figure}[hpb]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-ci2}
+  \caption{SDG showing data flow from an actual to a formal parameter}
+  \label{fig:manual-ci2}
+\end{figure}
+
+Expanding one of them results in a graph like \autoref{fig:manual-ci3}. We can again see data flowing to a procedure, 
+from an actual to a formal parameter, where it is then used in a statement. Notice that this is one of the statements 
+directly connected to the initial variable node. This shows that the SDG may contain some redundant data edges, which 
+stem from the fact that the SDG over approximates certain things.
+
+\begin{figure}[hpb]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-ci3}
+  \caption[SDG showing redundant data edges]
+    {SDG showing redundant data edges to statement \lstinline|tmp := (in^ * 10)|}
+  \label{fig:manual-ci3}
+\end{figure}
+
 % Change Cause: GeneralTest/FBDelegateTarget.pu(line 8)
