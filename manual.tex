@@ -196,7 +196,8 @@ to it. Click on the node to expand it, the result should look like \autoref{fig:
 \begin{figure}[hp]
   \centering
     \includegraphics[width=\textwidth]{bilder/manual-executions2}
-  \caption{Nodes that can be expanded are of a darker shade and marked by a little plus sign on their right side}
+  \caption[Graph showing a node that can be expanded, indicated by a little plus sign]
+    {Nodes that can be expanded are of a darker shade and marked by a little plus sign on their right side}
   \label{fig:manual-executions2}
 \end{figure}
 
@@ -204,21 +205,19 @@ After expanding all nodes, the graph should look like \autoref{fig:manual-execut
 procedures involved, algorithm \lstinline|aExit1| is called by algorithm \lstinline|pActivator|, which is in turn 
 called by the artificial \lstinline|main| procedure. You can ignore the artificial main procedure most of the time, 
 it's just an artifact of the analysis. In this case it signals that \lstinline|pActivator| is an entry point of the 
-program (all entry points are called by \lstinline|main|).
+program (all entry points are called by the artificial \lstinline|main| procedure).
 
 \begin{figure}[hp]
   \centering
     \includegraphics[width=\textwidth]{bilder/manual-executions3}
-  \caption{This graph shows one procedure calling another, the main procedure signals an entry point.
-    Notice the small nodes, which represent the procedure they are contained in.}
+  \caption[Graph showing a procedure call and an entry point]
+    {This graph shows one procedure calling another, the main procedure signals an entry point. Notice the small nodes, 
+    which represent the procedure they are contained in.}
   \label{fig:manual-executions3}
 \end{figure}
 
 
 \section{Additional Features} \label{sec:manual-features}
-
-% TODO Zooming
-% TODO Back/Forward
 
 There are a number of additional feature which may prove helpful, especially when working with larger graphs.
 
@@ -233,7 +232,7 @@ get too large) the tooltip also contains the entire statement.
   \label{fig:manual-tooltip}
 \end{figure}
 
-Right clicking on a node opens a context menu as seen in \autoref{fig:manual-node_context},which contains several 
+Right clicking on a node opens a context menu as seen in \autoref{fig:manual-node_context}, which contains several 
 additional actions.
 
 \begin{description}
@@ -241,7 +240,7 @@ additional actions.
   that don't fit on the screen.
   
   \item[Show Source] opens the source code location associated with the node in the IEC editor, if possible 
-  (\autoref{fig:manual-show_source}. Note that not all nodes may have a source location associated with them. This can 
+  (\autoref{fig:manual-show_source}). Note that not all nodes may have a source location associated with them. This can 
   also be invoked by clicking on a node while holding the control key.
   
   \item[Show Instance Declaration] opens the source code location defining the object instance the node belongs to.
@@ -293,7 +292,53 @@ The context menu also provides entries for executing a use case on the node.
   \label{fig:manual-search}
 \end{figure}
 
-% TODO Pruning
+\subsection{Dead Code Detection}
+
+Dead code detection is possible by using the hardware configuration of a project to \emph{prune} the SDG. The system 
+expects the hardware configuration to reside in the directory \texttt{/prj/Source/IMM/configuration} (which is not 
+configurable yet). To perform pruning, right click on an IEC project that has been built and select \emph{Perform 
+Pruning} from the \emph{Configure} menu as shown in \autoref{fig:manual-pruning}.
+
+\begin{figure}[htp]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-pruning}
+  \caption{Run dead code detection for a project by \emph{pruning} the SDG}
+  \label{fig:manual-pruning}
+\end{figure}
+
+After dead code detection has been executed, folders and files containing dead code will be decorated with a gray 
+bubble. Inside files, dead code will be highlighted as in \autoref{fig:manual-pruned}. The editor highlight uses a 
+configurable Eclipse annotation. To configure the annotation style, go to \emph{Preferences---General---Editors---Text 
+Editors---Annotations} (see also \autoref{fig:manual-prefs_annotations}).
+
+\begin{figure}[htp]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-pruned}
+  \caption{Editor and Project Explorer showing highlighted dead code}
+  \label{fig:manual-pruned}
+\end{figure}
+
+\begin{figure}[htp]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-prefs_annotations}
+  \caption{Preference page for customizing annotation styles}
+  \label{fig:manual-prefs_annotations}
+\end{figure}
+
+\subsection{Zoom}
+
+The \SB supports a few discrete semantic zooming levels. The default level shows nodes with their contents and one 
+level of containers (the containing procedure). By scrolling down, additional zoom levels can be accessed. The first 
+level minimizes nodes by hiding their contents, to better show the overall structure of the graph. The second level 
+additionally groups nodes by the functional unit (FU) they are contained in. An illustration of the zoom levels can be 
+seen in \autoref{fig:manual-zoom}.
+
+\begin{figure}[p]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-zoom}
+  \caption{The same graphs shown in different zoom levels}
+  \label{fig:manual-zoom}
+\end{figure}
 
 
 \section{Examples} \label{sec:manual-examples}
