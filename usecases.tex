@@ -86,8 +86,9 @@ data edges.
 \section{Change Impact}
 
 This use case targets all nodes in the SDG. The goal is to find all statements and variables which might be influenced 
-(whether a statement or procedure is executed; changes to a variable's value). The result is a graph which contains all 
-nodes directly or indirectly influenced by the execution of a statement or procedure, or by a variable's value.
+(i.e.\ whether a statement or procedure is executed, and changes to a variable's value). The result is a graph which 
+contains all nodes that are directly or indirectly influenced by the execution of a statement or procedure, or by a 
+variable's value.
 
 The example in \autoref{fig:sdg-changeimpact} shows a change impact for the highlighted return statement (source code 
 in \autoref{lst:sdg-calls}, \autopageref{lst:sdg-calls}). The return statement directly influences the procedure's 
@@ -103,7 +104,7 @@ the main procedure (which connects to all global and member variables, but doesn
 
 We can see in the example that the return statement actually only influences the return value, which in turn influences 
 the value of variable \lstinline|res2| and the print statement (via the highlighted edges). The change impact, however, 
-also contains a lot of unrelated nodes, which is caused by the \SB following all outgoing data and control edges, 
+also contains a lot of unrelated nodes. This is caused by the \SB following all outgoing data and control edges, 
 regardless of whether they are actually influenced by incoming edges. In this example, the statement influenced by the 
 return value of method \lstinline|bar| is not a conditional statement, so we know that the outgoing control edge is not 
 influenced by the incoming data edge. The SDG, however, does not encode this kind of information.

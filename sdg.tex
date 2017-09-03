@@ -114,9 +114,9 @@ don't have a representation in the SDG), additions are also mentioned.
 \subsection{Overview}
 
 The rough structure of the SDG is best explained by means of an example: the program in \autoref{lst:csdg-simple} uses 
-two load-time configuration options and contains conditional statements and method calls. The CSDG corresponding to the 
-program can be seen in \autoref{fig:csdg-simple}; note that this SDG is greatly simplified, but will suffice for a 
-rough overview.
+two load-time configuration options. It also contains conditional statements and method calls. The CSDG corresponding 
+to the program can be seen in \autoref{fig:csdg-simple}; note that this SDG is greatly simplified, but will suffice for 
+a rough overview.
 
 The procedure nodes in green correspond to the two methods in the program, \lstinline|main| and \lstinline|foo|. 
 Control edges in blue and red (for the \lstinline|true| and \lstinline|false| branch of a conditional, respectively) 
@@ -218,11 +218,11 @@ having an intermediate \emph{display graph} that wraps elements of the original 
   corresponding formal parameter is then just excluded from display.
   
   \item[Container Nodes] The SDG itself does not have any kind of hierarchy, i.e.\ a node does not contain other nodes. 
-  In the context of IEC programs, however, hierarchy may be quite important. The \SB therefore introduces artificial 
-  container nodes, which can represent procedures or functional units (which are similar to packages in Java). There 
-  are container nodes representing each procedure instance (except for the main procedure), which contain all nodes in 
-  the corresponding PDG, as well as formal parameter nodes and the procedure node itself. These in turn are contained 
-  in nodes representing functional units.
+  In the context of IEC programs, however, showing hierarchical relationships may be quite important. The \SB therefore 
+  introduces artificial container nodes, which can represent procedures or functional units (which are similar to 
+  packages in Java). There are container nodes representing each procedure instance (except for the main procedure), 
+  which contain all nodes in the corresponding PDG, as well as formal parameter nodes and the procedure node itself. 
+  These in turn are contained in nodes representing functional units.
   
   Container nodes are connected by artificial edges which are added whenever there are any edges between nodes within 
   the container nodes.
