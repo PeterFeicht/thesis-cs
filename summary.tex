@@ -9,4 +9,30 @@ using the \SB for concrete use cases, and explains additional features such as d
 discussed the implementation, with a particular focus on details that may be important to someone trying to understand 
 the \SB code base and extend it.
 
-\textbf{TODO expand with more summary}
+\begin{description}
+  \item[SDG] The SDG is built based on the AST of an IEC program. First the PDGs are built which encode control and 
+  data dependencies within a single procedure. Then PDGs are instantiated and connected to form the object-sensitive 
+  (i.e.\ instance-based) SDG. The SDG contains nodes for statements, calls, procedures, and parameters; it contains 
+  edges for control and for data dependencies. The \SB also introduces container nodes and dummy nodes.
+  
+  \item[Use Cases] There are four concrete use cases identified by Keba developers. The \emph{Executions} use case may 
+  be used to identify how a statements may be executed, by exploring control dependencies of a statement or procedure. 
+  The \emph{Variable   Assignment} use case shows all statements which modify a particular variable, and for those 
+  statements shows their Executions. The \emph{Change Impact} use case follows both data and control dependencies 
+  starting from any node in the SDG. It can be used to determine which statements or variables are influenced at all by 
+  the target node. Finally the \emph{Change Cause} use case is an inverse change impact, it can find variables or 
+  statements which influence the execution of a particular statement or the value of a variable.
+  
+  \item[Usage] The \SB as an Eclipse plugin uses the build infrastructure provided by the IEC editor plugin. The \SB 
+  operations can be accessed from the IEC editor context menu, navigation to the code from the \SB is also easily 
+  accessible. The \SB provides convenient features such as marking and hiding nodes that have been examined. Dead code 
+  detection based on a hardware configuration is possible, dead code is then highlighted in the editor and the \SB.
+  
+  \item[Implementation] The \SB is implemented as an Eclipse plugin in a model-view-controller pattern. The model 
+  represents a use case and builds a so called display graph based on the user interactions. The display graph is an 
+  abstraction of the SDG and AST, which allows the view to be implemented independently of the underlying SDG type. An 
+  \SB view only needs to implement an interface to be able to work with the controller. There is one concrete 
+  implementation for the Eclipse workbench, which uses Draw2D for rendering graph objects. The \SB may be controlled 
+  from within Eclipse, but can also accept commands trough an interface for external programs, which uses named pipes 
+  for communication.
+\end{description}
