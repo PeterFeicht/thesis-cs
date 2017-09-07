@@ -365,22 +365,39 @@ The command classes interface the \SB controller with other user interface compo
 from \lstinline|AbstractEditorCommandHandler| work with selections in the IEC Editor, they are registered via the \SB 
 \lstinline|plugin.xml| as entries in the IEC Editor context menu.
 
-The \SB also has an interface for use by external applications (e.g.\ Keba's IecEdit) which uses Windows named pipes. 
-Commands received via that interface are handled by classes inheriting from \lstinline|PipeCommand|. This type of 
-command usually takes a file path and source code range (the editor selection) as its input, maps it to AST nodes, and 
-then invokes methods on the \SB controller.
-
 Another kind of command is represented by class \lstinline|SDGBrowserCommand|. These commands work on display graph 
 elements and are mainly used internally by the \SB. There are a number of predefined commands which represent entries 
 in the context menus for nodes and edges in the \SB view. The base class and predefined commands are public, however, 
 so they may be used externally as well, for example in response to node selection events.
 
+\subsection{External Command Interface}
+
+The \SB also has an interface for use by external applications (e.g.\ Keba's IecEdit) which uses Windows named pipes. 
+Commands received via that interface are handled by classes inheriting from \lstinline|PipeCommand|. This type of 
+command usually takes a file path and source code range (the editor selection) as its input, maps it to AST nodes, and 
+then invokes methods on the \SB controller.
+
+The \SB listens on a Windows named pipe at \lstinline[language=]|\\.\pipe\\CodeProjectPipe| by default. It accepts 
+commands as strings, according to the grammar in \autoref{lst:command_grammar}. Method \lstinline|parseCommand| in the 
+plugin class dispatches received commands to the appropriate \lstinline|PipeCommand| subclass. This is the place to add 
+new commands.
+
+\begin{lstlisting}[float=ht,label={lst:command_grammar},language=,columns=fixed,basewidth=0.5em,
+  caption={Grammar for commands received via the Windows pipe interface}]
+Message        = Command ' ' [ Instance ' ' ] SourceLocation .
+Command        = ident .
+Instance       = '[' ident { '.' ident } ']' .
+SourceLocation = Path '(' Range ')' .
+Path           = '"' filepath '"' .
+Range          = integer ',' integer [ ',' integer ',' integer ] .
+\end{lstlisting}
+
 
 \section{Extensions}
 
 The purpose of this chapter was not to describe every detail of the implementation, but rather to give a course 
-overview of the general architecture and of possible places where extensions can be made. The code is well documented, 
-so together with this overview it should not be too difficult for new developers to grasp the system. This last section 
+overview of the general architecture and of possible places where extensions can be made. Together with the source code 
+documentation, it should not be too difficult for new developers to get familiar with the system. This last section 
 will briefly summarize the changes necessary for two types of extensions: adding new use cases and adding support for 
 new SDG types.
 
