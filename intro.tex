@@ -36,10 +36,12 @@ instances needs to be extracted from the source code alone, which might not be e
 languages like Java that support dynamic allocation of objects, complicated points-to analysis is necessary to 
 determine which object instances might exist, and then the result may still be inaccurate.
 
-This is, however, not a problem with the \IEC family of languages~\cite{IEC61131:2003} used in this thesis, as they 
-don't support dynamic allocation. An instance in those languages is statically allocated by defining a variable of a 
-particular type. This makes it possible to statically determine all instances of objects that will exist at runtime, 
-making it possible to build an instance-based SDG.
+This is, however, not a problem with the \IEC family of languages~\cite{IEC61131:2003} used in this thesis. The \IEC 
+standard defines languages for programmable logic controllers used in automation systems. Vendors implement the 
+standard and provide tools, e.g.\ the \emph{Kemro IEC} implementation provided by our industry partner Keba AG. An 
+important property of those languages is that they don't support dynamic allocation. Therefore, an object instance is 
+statically allocated by defining a variable of a particular type. This makes it possible to statically determine all 
+instances of objects that will exist at runtime, making it possible to build an instance-based SDG.
 
 
 \section{The Tool} \label{sec:intro-tool}
@@ -64,12 +66,12 @@ tool was developed with a number of use cases in mind.
   other statements or variables which might have an impact on its value or execution.
 \end{description}
 
-The versions of the SDG and \SB introduced in this thesis work with the \IEC languages only, because this was the 
+The versions of the SDG and \SB introduced in this thesis work with the Kemro IEC languages only, because this was the 
 initial target of Florian Angerer's PhD work. However there is ongoing work to support analysis across language 
 boundaries as well~\cite{DBLP:conf/kbse/Angerer14}.
 
 
-\section{Context}
+\section{Context} \label{sec:intro-context}
 
 The \SB was developed in the course of our cooperation with \href{http://www.keba.com}{Keba AG} at the \emph{Christian 
 Doppler Laboratory on Monitoring and Evolution of Very-Large-Scale Software Systems} (CDL MEVSS for short).

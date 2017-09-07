@@ -3,21 +3,21 @@
 This chapter will describe the usage and features of the \SB in detail and serve as a user's manual. 
 \autoref{sec:manual-overview} will give an overview of the IEC editor and the process of creating the IEC project. 
 \autoref{sec:manual-sdg} will cover the steps needed to use the \SB. A detailed description of the \SB features will be 
-given in \autoref{sec:manual-features}. Finally \autoref{sec:manual-examples} will cover each use case and include 
-examples of problems that might be solved.
+given in \autoref{sec:manual-features}. Finally \autoref{sec:manual-examples} will cover each use case based on example 
+problems.
 
 
 \section{Overview} \label{sec:manual-overview}
 
-After first installing the \SB plugins and opening the \emph{\SB} perspective, the Eclipse workbench should look like 
-\autoref{fig:manual-perspective}. On the left and right are the standard Eclipse Project Explorer and Outline views, 
-respectively. On the bottom is the new \SB view, below the Project Explorer is the Instance Hierarchy view. Those two 
-views can be opened in any other perspective using the \emph{Show View} dialog (Alt+Shift+Q, Q by default) as shown in 
-\autoref{fig:manual-open_views}.
+After installing the \SB plugins and opening the \emph{\SB} perspective, the Eclipse workbench should have a layout as 
+shown in \autoref{fig:manual-perspective}. On the left and right are the standard Eclipse Project Explorer and Outline 
+views, respectively. On the bottom is the new \SB view, below the Project Explorer is the Instance Hierarchy view. 
+Those two views can be opened in any other perspective using the \emph{Show View} dialog (Alt+Shift+Q, Q by default) as 
+shown in \autoref{fig:manual-open_views}.
 
 \begin{figure}[hp]
   \centering
-    \includegraphics[scale=0.55]{bilder/manual-open_views}
+    \includegraphics[scale=0.6]{bilder/manual-open_views}
   \caption{Entries in the \emph{Show View} dialog for the \SB views}
   \label{fig:manual-open_views}
 \end{figure}
@@ -29,16 +29,16 @@ views can be opened in any other perspective using the \emph{Show View} dialog (
   \label{fig:manual-perspective}
 \end{figure}
 
-In order to use the \SB with IEC source code, you first need to build it in IecEdit and import it as an Eclipse IEC 
-Project. A project also needs to be rebuilt in IecEdit whenever it is moved to a different location.
+In order to use the \SB with IEC source code, you first need to build it in IecEdit (Keba's IDE for Kemro IEC code). A 
+project also needs to be rebuilt in IecEdit whenever it is moved to a different location. Then the project needs to be 
+imported as an Eclipse project as follows.
 
 \begin{enumerate}
-  \item Create a new Eclipse project and select \emph{IEC Project} from the IEC category (see 
-  \autoref{fig:manual-new_project1}).
+  \item Create a new Eclipse project and select \emph{IEC Project} (see \autoref{fig:manual-new_project1}).
   
   \item On the next page, enter a name for the project and select the location of the IEC project files 
-  (\autoref{fig:manual-new_project2}). This is the location where the Eclipse project file will be created, the IEC 
-  source code may be located there or in any subdirectory.
+  (\autoref{fig:manual-new_project2}). This is the location where the Eclipse project file will be created. The IEC 
+  source code may be located in the same directory or in any subdirectory.
   
   \item In case you have a standard project layout with HMI, the default source code locations may be used 
   (\texttt{/prj/Source/IMM/ieccontrol} for IEC code and \texttt{/prj/Source/IMM/view/viewKVS} for view code). 
@@ -54,17 +54,19 @@ Project. A project also needs to be rebuilt in IecEdit whenever it is moved to a
 \end{figure}
 
 \begin{figure}[hp]
-\centering
-\includegraphics[scale=0.55]{bilder/manual-new_project2}
-\caption{\ldots{}and specify the source code location}
-\label{fig:manual-new_project2}
+  \centering
+    \includegraphics[scale=0.55]{bilder/manual-new_project2}
+  \caption{\ldots{}and specify the source code location}
+  \label{fig:manual-new_project2}
 \end{figure}
 
 After the project has been created, the Project Explorer will show all files and folders under the project directory, 
-with some exceptions. Files recognized by any Eclipse editor can be opened directly, including IEC source files. Note, 
-however, that the IEC editor as it's currently implemented doesn't allow editing. This is so files containing Keba's 
-proprietary representation of the source code (the so called \emph{UFF code}), in addition to the textual IEC code, 
-don't get corrupted.
+with some exceptions. Files recognized by any Eclipse editor can be opened directly, including IEC source files. 
+Support for IEC files is based on contributions by Alois Mühleder during his bachelor thesis \cite{MuehlederBA}.
+
+Note, however, that the IEC editor as it is currently implemented doesn't allow editing. The reason for this is that 
+the IEC source files may also contain Keba's proprietary representation of the source code (the so called \emph{UFF 
+code}), in addition to the textual IEC code, which would get corrupted if not edited properly.
 
 By default, IEC binaries and files related to Keba's IecEdit will not be shown in the Project Explorer. This may be 
 changed by disabling the respective filters in the Project Explorer (via the \emph{Customize View...}\ menu item).
@@ -72,10 +74,17 @@ changed by disabling the respective filters in the Project Explorer (via the \em
 \autoref{fig:manual-editor} shows an IEC file opened in the Eclipse editor. Note the file outline on the right hand 
 side. The IEC editor shows only the textual IEC code, the UFF code is truncated from the output.
 
+\begin{figure}[hpb]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-editor}
+  \caption{IEC file opened in Eclipse, an outline of the file is shown to the right}
+  \label{fig:manual-editor}
+\end{figure}
+
 The IEC editor allows navigation through the IEC code in a number of ways.
 
 \begin{itemize}
-  \item The outline view can be used to navigate within a file to different procedures or declarations of variables.
+  \item The outline view can be used to navigate within a file to procedures or variables.
   
   \item The editor also supports hyperlinks which may be used to go to the definition of a variable or procedure (via 
   Ctrl+Click on the name).
@@ -84,13 +93,6 @@ The IEC editor allows navigation through the IEC code in a number of ways.
   implemented as well. This can be accessed in the Eclipse \emph{Search} menu or via the editor context menu 
   (\autoref{fig:manual-search}, \autopageref{fig:manual-search}).
 \end{itemize}
-
-\begin{figure}[hp]
-  \centering
-    \includegraphics[width=\textwidth]{bilder/manual-editor}
-  \caption{IEC file opened in Eclipse, an outline of the file is shown to the right}
-  \label{fig:manual-editor}
-\end{figure}
 
 
 \section{Using the \SB} \label{sec:manual-sdg}
@@ -101,8 +103,10 @@ projects this can take several minutes.
 
 To build the SDG, open any file within the project and then hit Ctrl+B or select \emph{Build Project} from the 
 \emph{Project} menu (\autoref{fig:manual-build1}). If you try to use any of the \SB operations before the project has 
-been built, you will be asked whether you want to build the project (\autoref{fig:manual-build2}). \textbf{Important:} 
-only work on one project at a time; limitations in Soot prevent us from having more than one SDG in memory.
+been built, you will be asked whether you want to build the project.
+
+\textbf{Important:} only work on one project at a time; limitations in Soot prevent us from having more than one SDG in 
+memory.
 
 \begin{figure}[hp]
   \centering
@@ -111,20 +115,12 @@ only work on one project at a time; limitations in Soot prevent us from having m
   \label{fig:manual-build1}
 \end{figure}
 
-\begin{figure}[hp]
-  \centering
-    \includegraphics[scale=0.55]{bilder/manual-build2}
-  \caption{Confirmation before starting a lengthy project build}
-  \label{fig:manual-build2}
-\end{figure}
-
-\clearpage
 The \SB operations can be accessed from the IEC editor context menu (see \autoref{fig:manual-editor_context}). Usually 
 you would select a source code element of interest (variable, statement, procedure) in the editor and then choose the 
 desired operation from the context menu. In case nothing is selected, the whole line will be selected automatically for 
 convenience.
 
-\begin{figure}[hp]
+\begin{figure}[htp]
   \centering
     \includegraphics[width=\textwidth]{bilder/manual-editor_context}
   \caption{IEC editor context menu entries for \SB operations}
@@ -133,7 +129,7 @@ convenience.
 
 \autoref{fig:manual-executions1} shows the screen after choosing \emph{Show Executions} from the context menu. Notice 
 the whole statement is selected now. The \SB view shows a node for the selected statement \lstinline|i := 6|, and nodes 
-for all immediate predecessors (only \lstinline|cond1| int his case). The nodes are contained by a node that represents 
+for all immediate predecessors (only \lstinline|cond1| in this case). The nodes are contained by a node that represents 
 the procedure those statements belong to (the algorithm \lstinline|aExit1|).
 
 \begin{figure}[htp]
@@ -145,7 +141,7 @@ the procedure those statements belong to (the algorithm \lstinline|aExit1|).
 
 You can navigate by panning the view: click and then drag with the middle mouse button anywhere in the graph. At the 
 top right corner of the \SB view you can see an overview thumbnail that shows the whole graph. This can also be used to 
-navigate large graphs: click or drag anywhere in the thumbnail to center or drag the view around that point.
+navigate large graphs: click or drag the thumbnail to view that point.
 
 The \SB includes a legend as a quick reference of what the different colors and shapes of nodes and edges represent. 
 Click on the leftmost icon in the toolbar of the \SB view to show/hide it (see \autoref{fig:manual-legend}).
@@ -158,36 +154,38 @@ Click on the leftmost icon in the toolbar of the \SB view to show/hide it (see \
 \end{figure}
 
 For details on the types of nodes and edges in the SDG, as well as its structure, refer to \autoref{ch:sdg}. There are 
-the following types of nodes in the SDG.
+the following types of nodes in the \SB.
 
 \begin{itemize}
-  \item Procedure nodes represent executable procedures like functions, event handlers, process algorithms, etc. 
+  \item \emph{Procedure nodes} represent executable procedures like functions, event handlers, process algorithms, etc. 
   Procedure nodes may also be containers of the statements and variables within.
   
-  \item Variable nodes represent all kinds of variables: local, global, and member variables; return values.
+  \item \emph{Variable nodes} represent all kinds of variables: local, global, and member variables, as well as return 
+  values.
   
-  \item Expression nodes represent formal parameters and actual parameter expressions.
+  \item \emph{Expression nodes} represent formal parameters and actual parameter expressions.
   
-  \item Activation nodes represent calls, as well as other kinds of activation (for example, setting an event will 
-  cause all its event handlers to be executed, but this is not a call in the traditional sense).
+  \item \emph{Activation nodes} represent calls and other kinds of activation (for example, setting an event will cause 
+  all its event handlers to be executed, but this is not a call in the traditional sense).
   
-  \item Statement nodes and conditional statement nodes represent ordinary and conditional statements, respectively.
+  \item \emph{Statement nodes} and conditional statement nodes represent ordinary and conditional statements, 
+  respectively.
 \end{itemize}
 
 The SDG may contain two types of edges, two additional kinds are introduced by the \SB.
 
 \begin{itemize}
-  \item Control edges represent a control dependency, the target node will only be executed if the source node is as 
-  well. In case the source node is a conditional statement, the edge color will indicate whether the target node is 
-  executed if the condition is true or false.
+  \item \emph{Control edges} represent a control dependency, i.e.\ the target node will only be executed if the source 
+  node is executed as well. In case the source node is a conditional statement, the edge color will indicate whether 
+  the target node is executed if the condition is true or false.
   
-  \item Data edges represent a data flow from the source node (e.g.\ a write to a variable) to the target node (e.g.\ a 
-  read from a variable).
+  \item \emph{Data edges} represent a data flow from the source node (e.g.\ a write to a variable) to the target node 
+  (e.g.\ a read from a variable).
   
-  \item Compound edges between container nodes indicate more than one edge.
+  \item \emph{Compound edges} between container nodes represent more than one edge.
   
-  \item A cyclic edge indicates an edge that introduces a cycle in the graph, it always leads to a node that has 
-  already been discovered earlier.
+  \item A \emph{cyclic edge} indicates an edge that introduces a cycle in the graph, i.e. it always leads to a node 
+  that has already been discovered earlier.
 \end{itemize}
 
 You will have noticed that the node for the conditional statement \lstinline|cond1| is of a darker shade than the 
@@ -202,10 +200,10 @@ to it. Click on the node to expand it, the result should look like \autoref{fig:
   \label{fig:manual-executions2}
 \end{figure}
 
-After expanding all nodes, the graph should look like \autoref{fig:manual-executions3}. Notice that there are now two 
+After expanding all nodes, the graph will look like \autoref{fig:manual-executions3}. Notice that there are now two 
 procedures involved, algorithm \lstinline|aExit1| is called by algorithm \lstinline|pActivator|, which is in turn 
 called by the artificial \lstinline|main| procedure. You can ignore the artificial main procedure most of the time, 
-it's just an artifact of the analysis. In this case it signals that \lstinline|pActivator| is an entry point of the 
+it is just an artifact of the analysis. In this case it signals that \lstinline|pActivator| is an entry point of the 
 program (all entry points are called by the artificial \lstinline|main| procedure).
 
 \begin{figure}[hp]
@@ -213,8 +211,15 @@ program (all entry points are called by the artificial \lstinline|main| procedur
     \includegraphics[width=\textwidth]{bilder/manual-executions3}
   \caption[Graph showing a procedure call and an entry point]
     {This graph shows one procedure calling another, the main procedure signals an entry point. Notice the small nodes, 
-    which represent the procedure they are contained in.}
+    which represent the entry point of the procedure they are contained in.}
   \label{fig:manual-executions3}
+\end{figure}
+
+\begin{figure}[!hp]
+  \centering
+    \includegraphics[width=\textwidth]{bilder/manual-search}
+  \caption{Search results for a local variable using \emph{References in Project}}
+  \label{fig:manual-search}
 \end{figure}
 
 
@@ -250,7 +255,7 @@ additional actions.
   activating the corresponding checkbox (see \autoref{fig:manual-hide_flagged}).
   
   \item[Collapse All] collapses a node and all its successors at once. Note that this is different from simply 
-  collapsing a node, in which case the expansion state of all its predecessors is preserved.
+  collapsing a node, because the expansion state of all its successors is reset as well.
   
   \item[Expand Next Level] expands all successors of the node.
 \end{description}
@@ -286,19 +291,14 @@ The context menu also provides entries for executing a use case on the node.
   \label{fig:manual-show_source}
 \end{figure}
 
-\begin{figure}[p]
-  \centering
-    \includegraphics[width=\textwidth]{bilder/manual-search}
-  \caption{Search results for a local variable using \emph{References in Project}}
-  \label{fig:manual-search}
-\end{figure}
-
+\clearpage
 \subsection{Dead Code Detection}
 
-Dead code detection is possible by using the hardware configuration of a project to \emph{prune} the SDG. The system 
-expects the hardware configuration to reside in the directory \texttt{/prj/Source/IMM/configuration} (which is not 
-configurable yet). To perform pruning, right click on an IEC project that has been built and select \emph{Perform 
-Pruning} from the \emph{Configure} menu as shown in \autoref{fig:manual-pruning}.
+Dead code detection is possible by using the hardware configuration of a project to \emph{prune} the SDG (see 
+\cite{AngererDiss} and \cite{DBLP:conf/splc/AngererPLGG14}). The system expects the hardware configuration to reside in 
+the directory \texttt{/prj/Source/IMM/configuration} (which is not configurable yet). To perform pruning, right click 
+on an IEC project that has been built and select \emph{Perform Pruning} from the \emph{Configure} menu as shown in 
+\autoref{fig:manual-pruning}.
 
 \begin{figure}[htp]
   \centering
@@ -308,9 +308,9 @@ Pruning} from the \emph{Configure} menu as shown in \autoref{fig:manual-pruning}
 \end{figure}
 
 After dead code detection has been executed, folders and files containing dead code will be decorated with a gray 
-bubble. Inside files, dead code will be highlighted as in \autoref{fig:manual-pruned}. The editor highlight uses a 
-configurable Eclipse annotation. To configure the annotation style, go to \emph{Preferences---General---Editors---Text 
-Editors---Annotations} (see also \autoref{fig:manual-prefs_annotations}).
+bubble. Inside files, dead code will be highlighted as in \autoref{fig:manual-pruned}, using a configurable Eclipse 
+annotation. To configure the annotation style, go to \emph{Preferences---General---Editors---Text 
+Editors---Annotations} (\autoref{fig:manual-prefs_annotations}).
 
 \begin{figure}[htp]
   \centering
@@ -329,10 +329,10 @@ Editors---Annotations} (see also \autoref{fig:manual-prefs_annotations}).
 \subsection{Zoom}
 
 The \SB supports a few discrete semantic zooming levels. The default level shows nodes with their contents and one 
-level of containers (the containing procedure). By scrolling down, additional zoom levels can be accessed. The first 
-level minimizes nodes by hiding their contents, to better show the overall structure of the graph. The second level 
-additionally groups nodes by the functional unit (FU) they are contained in. An illustration of the zoom levels can be 
-seen in \autoref{fig:manual-zoom}.
+level of containers (the containing procedure). By scrolling down using the mouse wheel, additional zoom levels can be 
+accessed. The first level minimizes nodes by hiding their contents, to better show the overall structure of the graph. 
+The second level additionally groups nodes by the functional unit (FU) they are contained in. An illustration of the 
+zoom levels can be seen in \autoref{fig:manual-zoom}.
 
 \begin{figure}[p]
   \centering
@@ -352,9 +352,9 @@ seen in \autoref{fig:manual-zoom}.
 %\lstinline|Crane|, \lstinline|Stack|, and \lstinline|PPUSystem| which connects the other two. For each of those 
 %function blocks, there is a corresponding block for the PPU simulation.
 
-This section will provide examples for using the \SB by means of some simple tasks. The examples are based on a test 
-project that covers most of the language features of Keba's \IEC implementation. This test project was chosen because 
-it is far more manageable than one of Keba's real systems, plus it doesn't contain any proprietary code.
+This section will provide examples for using the \SB for some simple tasks. The examples are based on a test project 
+that covers most of the language features of Keba's \IEC implementation. This test project was chosen because it is far 
+more manageable than one of Keba's real systems, plus it does not contain any proprietary code.
 
 The resulting graph for each use case will only be outlined, refer to \autoref{ch:usecases} for the exact semantics of 
 each use case.
@@ -466,7 +466,7 @@ that the two actual parameters inside \lstinline|FBDelegator| result from the fa
 Expanding one of them results in a graph like \autoref{fig:manual-ci3}. We can again see data flowing to a procedure, 
 from an actual to a formal parameter, where it is then used in a statement. Notice that this is one of the statements 
 directly connected to the initial variable node. This shows that the SDG may contain some redundant data edges, which 
-stem from the fact that the SDG over approximates certain things.
+stem from the fact that the SDG is an over approximation of all possible dependencies.
 
 \begin{figure}[hpb]
   \centering
