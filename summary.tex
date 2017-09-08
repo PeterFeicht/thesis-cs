@@ -1,38 +1,59 @@
 \chapter{Summary} \label{ch:summary}
 
-This thesis presented the creation of the \SB, an interactive tool for exploring system dependence graphs (SDGs). First 
-we described the structure of the SDG and how it represents certain programming constructs, such as function calls and 
-methods, as well as the additions and simplifications applied by the tool. The tool was created with four concrete use 
-cases in mind, which we discussed by means of examples. The next part of the thesis was written as a user's manual for 
-the \SB and the related IEC project infrastructure. The manual details the steps for creating and building a project, 
-using the \SB for concrete use cases, and explains additional features such as dead code detection. Lastly, we 
-discussed the implementation, with a particular focus on details that may be important to someone trying to understand 
-the \SB code base and extend it.
+This thesis presented the \SB, an interactive tool for exploring system dependence graphs (SDGs). First we described 
+the structure of the SDG and how it represents certain programming constructs, such as function calls and methods, as 
+well as the additions and simplifications applied by the tool. The tool was created with four concrete use cases in 
+mind, which we discussed by means of examples. The next part of the thesis was written as a user's manual for the \SB 
+and the related IEC project infrastructure. The manual details the steps for creating and building a project, using the 
+\SB for concrete use cases, and explains additional features such as dead code detection. Lastly, we discussed the 
+implementation, with a particular focus on details that may be important to someone trying to understand the \SB code 
+base and extend it.
 
-\begin{description}
-  \item[SDG] The SDG is built based on the AST of an IEC program. First the PDGs are built which encode control and 
-  data dependencies within a single procedure. Then PDGs are instantiated and connected to form the object-sensitive 
-  (i.e.\ instance-based) SDG. The SDG contains nodes for statements, calls, procedures, and parameters; it contains 
-  edges for control and for data dependencies. The \SB also introduces container nodes and dummy nodes.
+The \SB was developed in the course of our cooperation with \href{http://www.keba.com}{Keba AG} at the \emph{Christian 
+Doppler Laboratory on Monitoring and Evolution of Very-Large-Scale Software Systems} (CDL MEVSS for short). During his 
+PhD work, Florian Angerer created our implementation of the SDG. The goal of the \SB is to make it possible to 
+interactively explore that SDG and use it for program comprehension and evolution, and for solving problems.
+
+The SDG is built based on the AST of an IEC program. First the PDGs are built which encode control and data 
+dependencies within a single procedure. Then PDGs are instantiated and connected to form the object-sensitive (i.e.\ 
+instance-based) SDG. The SDG contains nodes for statements, calls, procedures, and parameters; it contains edges for 
+control and for data dependencies. The \SB also introduces container nodes and dummy nodes.
   
-  \item[Use Cases] There are four concrete use cases identified by Keba developers. The \emph{Executions} use case may 
-  be used to identify how a statements may be executed, by exploring control dependencies of a statement or procedure. 
-  The \emph{Variable   Assignment} use case shows all statements which modify a particular variable, and for those 
-  statements shows their Executions. The \emph{Change Impact} use case follows both data and control dependencies 
-  starting from any node in the SDG. It can be used to determine which statements or variables are influenced at all by 
-  the target node. Finally the \emph{Change Cause} use case is an inverse change impact, it can find variables or 
-  statements which influence the execution of a particular statement or the value of a variable.
-  
-  \item[Usage] The \SB as an Eclipse plugin uses the build infrastructure provided by the IEC editor plugin. The \SB 
-  operations can be accessed from the IEC editor context menu, navigation to the code from the \SB is also easily 
-  accessible. The \SB provides convenient features such as marking and hiding nodes that have been examined. Dead code 
-  detection based on a hardware configuration is possible, dead code is then highlighted in the editor and the \SB.
-  
-  \item[Implementation] The \SB is implemented as an Eclipse plugin in a model-view-controller pattern. The model 
-  represents a use case and builds a so called display graph based on the user interactions. The display graph is an 
-  abstraction of the SDG and AST, which allows the view to be implemented independently of the underlying SDG type. An 
-  \SB view only needs to implement an interface to be able to work with the controller. There is one concrete 
-  implementation for the Eclipse workbench, which uses Draw2D for rendering graph objects. The \SB may be controlled 
-  from within Eclipse, but can also accept commands trough an interface for external programs, which uses named pipes 
-  for communication.
-\end{description}
+There are four concrete use cases identified by Keba developers. The \emph{Executions} use case may be used to identify 
+how a statements may be executed, by exploring control dependencies of a statement or procedure. The \emph{Variable   
+Assignment} use case shows all statements which modify a particular variable, and for those statements shows their 
+Executions. The \emph{Change Impact} use case follows both data and control dependencies starting from any node in the 
+SDG. It can be used to determine which statements or variables are influenced at all by the target node. Finally the 
+\emph{Change Cause} use case is an inverse change impact, it can find variables or statements which influence the 
+execution of a particular statement or the value of a variable.
+
+The \SB as an Eclipse plugin uses the build infrastructure provided by the IEC editor plugin. The \SB operations can be 
+accessed from the IEC editor context menu, navigation to the code from the \SB is also easily accessible. The \SB 
+provides convenient features such as marking and hiding nodes that have been examined. Dead code detection based on a 
+hardware configuration is possible, dead code is then highlighted in the editor and the \SB.
+
+The \SB is implemented as an Eclipse plugin in a model-view-controller pattern. The model represents a use case and 
+builds a so called display graph based on the user interactions. The display graph is an abstraction of the SDG and 
+AST, which allows the view to be implemented independently of the underlying SDG type. An \SB view only needs to 
+implement an interface to be able to work with the controller. There is one concrete implementation for the Eclipse 
+workbench, which uses Draw2D for rendering graph objects. The \SB may be controlled from within Eclipse, but can also 
+accept commands trough an interface for external programs, which uses named pipes for communication.
+
+\section{Experiences}
+
+Our first approach to the \SB used the \href{https://d3js.org/}{D3.js} framework in a browser embedded into the Eclipse 
+IDE\footnotemark. D3.js was chosen because of it's ability to quickly create appealing visualizations, combined with 
+built-in support for transitions. However, we soon discovered that this would lead to significant code duplication. 
+Some of the supporting data structures would need to be implemented both on the Eclipse side in Java and on the 
+browser side in JavaScript. Communication between both sides also needed to happen through JSON-serialized objects, 
+with was another unnecessary burden. We therefore decided to implement the view in pure Java using the Draw2D 
+framework, which is native to Eclipse.
+
+\footnotetext{We used \href{https://www.teamdev.com/jxbrowser}{JxBrowser} by Ukrainian company TeamDev. The library 
+provides a Chromium browser and works flawlessly when integrated into an SWT part. It is well documented and the 
+developers react quickly to bug reports.}
+
+We also discovered that providing a stable layout for an incrementally built graph is rather difficult. Our layout 
+algorithm of choice (KLay) handles this case more or less gracefully, however there are still significant layout 
+changes at times. More research is required to provide a stable layout for  changing graphs to support a nice user 
+experience.
