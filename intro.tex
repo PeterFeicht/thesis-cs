@@ -6,8 +6,8 @@ graphs} (PDGs). A PDG consists of a node for the procedure itself, a number of f
 and global variables used in the procedure, and nodes for every statement in the procedure. The nodes are connected by 
 edges representing the control and data dependencies inside the procedure. The SDG also represents the dependencies 
 between procedures in the whole program, based on one or more entry points into the program. Further, the SDG is 
-instance-based, which means, in object-oriented terms, that for multiple instances of a class a method called on 
-different instances will be represented by distinct instances of the method's PDG.
+instance-based, which means in object-oriented terms, that a method called on different instances of a class will be 
+represented by distinct instances of the method's PDG.
 
 In configurable software systems that need to meet a wide range of customer requirements, variability is of great 
 importance. Understanding variable software is essential for its evolution and there are several approaches for dealing 
@@ -38,7 +38,7 @@ instances of objects that will exist at runtime, making it possible to build an 
 
 Since SDGs can get very large---many hundreds of thousands of nodes 
 \cite[sec.~4.3]{DBLP:conf/splc/AngererPLGG14}---using them for manual analysis in their entirety is impossible. There 
-are, however, a number of use cases where one would want to explore the SDG of a system manually, for example the 
+are, however, a number of use cases where one would want to explore the SDG of a system manually, for example, the 
 aforementioned change impact analysis.
 
 The tool developed in this thesis, named the \emph{\SB}, provides a means for interactive exploration of an SDG based 
