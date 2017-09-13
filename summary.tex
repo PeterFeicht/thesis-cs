@@ -4,15 +4,15 @@ This thesis presented the \SB, an interactive tool for exploring system dependen
 the structure of the SDG and how it represents certain programming constructs, such as function calls and methods, as 
 well as the additions and simplifications applied by the tool. The tool was created with four concrete use cases in 
 mind, which we discussed by means of examples. The next part of the thesis was written as a user's manual for the \SB 
-and the related IEC project infrastructure. The manual details the steps for creating and building a project, using the 
-\SB for concrete use cases, and explains additional features such as dead code detection. Lastly, we discussed the 
+and the related IEC project infrastructure. It shows the steps for creating and building a project, using the \SB for 
+concrete use cases, and explains additional features such as dead code detection. Lastly, we discussed the 
 implementation, with a particular focus on details that may be important to someone trying to understand the \SB code 
 base and extend it.
 
 The \SB was developed in the course of our cooperation with \href{http://www.keba.com}{Keba AG} at the \emph{Christian 
-Doppler Laboratory on Monitoring and Evolution of Very-Large-Scale Software Systems} (CDL MEVSS for short). During his 
-PhD work, Florian Angerer created our implementation of the SDG. The goal of the \SB is to make it possible to 
-interactively explore that SDG and use it for program comprehension and evolution, and for solving problems.
+Doppler Laboratory on Monitoring and Evolution of Very-Large-Scale Software Systems} (CDL MEVSS for short). Florian 
+Angerer developed the SDG during his PhD work. The goal of the \SB is to make it possible to interactively explore that 
+SDG and use it for program comprehension and evolution.
 
 The SDG is built based on the AST of an IEC program. First the PDGs are built which encode control and data 
 dependencies within a single procedure. Then PDGs are instantiated and connected to form the object-sensitive (i.e.\ 
@@ -24,7 +24,7 @@ how a statements may be executed, by exploring control dependencies of a stateme
 Assignment} use case shows all statements which modify a particular variable, and for those statements shows their 
 Executions. The \emph{Change Impact} use case follows both data and control dependencies starting from any node in the 
 SDG. It can be used to determine which statements or variables are influenced at all by the target node. Finally the 
-\emph{Change Cause} use case is an inverse change impact, it can find variables or statements which influence the 
+\emph{Change Cause} use case is an inverse change impact, i.e., it can find variables or statements which influence the 
 execution of a particular statement or the value of a variable.
 
 The \SB as an Eclipse plugin uses the build infrastructure provided by the IEC editor plugin. The \SB operations can be 
@@ -41,7 +41,7 @@ accept commands trough an interface for external programs, which uses named pipe
 
 \section{Experiences}
 
-Our first approach to the \SB used the \href{https://d3js.org/}{D3.js} framework in a browser embedded into the Eclipse 
+My first approach to the \SB used the \href{https://d3js.org/}{D3.js} framework in a browser embedded into the Eclipse 
 IDE\footnotemark. D3.js was chosen because of it's ability to quickly create appealing visualizations, combined with 
 built-in support for transitions. However, we soon discovered that this would lead to significant code duplication. 
 Some of the supporting data structures would need to be implemented both on the Eclipse side in Java and on the 
