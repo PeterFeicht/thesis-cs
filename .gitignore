@@ -1,0 +1,13 @@
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.lof
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+*.toc
+*.txss
+
+/thesis.pdf
